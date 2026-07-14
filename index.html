@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="World Cup 26 match centre — semi-finals and final.">
+  <title>World Cup 26 | Match Centre</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="noise"></div>
+  <header class="topbar">
+    <a href="#overview" class="wordmark" aria-label="World Cup 26 match centre">FIFA <b>WORLD CUP 26</b><i>™</i></a>
+    <nav><a class="active" href="#overview">Match Centre</a><a href="#bracket">Knockout</a><a href="#final">Final</a></nav>
+    <div class="live-chip"><span></span><strong id="connection-status">LIVE DATA</strong><small id="updated-time">Updating</small></div>
+  </header>
+
+  <main id="overview">
+    <section class="hero-panel">
+      <div class="tournament-label"><span>FIFA World Cup 26™</span><span>North America · 11 June — 19 July</span></div>
+      <div class="hero-heading"><p>Knockout stage</p><h1>THE LAST<br><em>FOUR.</em></h1><span class="edition">2026</span></div>
+      <div class="next-match" id="primary-card">
+        <div class="match-meta"><span id="primary-status">SEMI-FINAL 01</span><span id="primary-detail">Dallas Stadium</span></div>
+        <div class="clubs"><div class="club"><b class="flag flag-fr">FR</b><strong id="home-name">France</strong></div><div class="score-block"><b id="home-score">—</b><small id="match-time">14 JUL · 20:00</small><b id="away-score">—</b></div><div class="club"><b class="flag flag-es">ES</b><strong id="away-name">Spain</strong></div></div>
+        <div class="match-actions"><button class="watch-button" id="watch-match">Open match centre <span>↗</span></button><button class="bell-button" id="remind-button" aria-label="Set a match reminder">♧ <span>Set reminder</span></button></div>
+      </div>
+    </section>
+
+    <section class="command-deck" id="match-centre">
+      <div class="deck-header"><div><p class="kicker">Match centre</p><h2>France <span>v</span> Spain</h2></div><div class="timeline-control"><button id="prev-event" aria-label="Previous event">←</button><div><b id="event-minute">PRE-MATCH</b><small>Event timeline</small></div><button id="next-event" aria-label="Next event">→</button></div></div>
+      <div class="tabs" role="tablist"><button class="selected" data-panel="timeline">Timeline</button><button data-panel="lineups">Line-ups</button><button data-panel="stats">Match stats</button><button data-panel="insight">Match insight</button></div>
+      <div class="panel selected" id="timeline"><div class="timeline" id="timeline-list"></div></div>
+      <div class="panel" id="lineups"><div class="lineup-grid"><div><h3><span class="flag flag-fr">FR</span> France</h3><div class="pitch-list" id="home-lineup"></div></div><div><h3><span class="flag flag-es">ES</span> Spain</h3><div class="pitch-list" id="away-lineup"></div></div></div><p class="data-note">Line-ups and substitutions appear here when supplied by the live match feed.</p></div>
+      <div class="panel" id="stats"><div class="stat-board" id="stat-board"></div></div>
+      <div class="panel" id="insight"><div class="insight-layout"><p class="big-quote">“One match. One way through.”</p><div><p class="kicker">The route to the final</p><p>Use the timeline to track every turning point — goals, cards, VAR reviews and substitutions — as official match information becomes available.</p><button class="watch-button" id="share-button">Share match centre <span>↗</span></button></div></div></div>
+    </section>
+
+    <section class="semi-section"><div class="section-title"><p class="kicker">Semi-final schedule</p><h2>Two matches. <em>One final.</em></h2></div><div class="fixture-list" id="fixture-list"></div></section>
+
+    <section class="bracket-section" id="bracket"><p class="kicker">The path</p><div class="bracket-heading"><h2>Knockout <em>bracket</em></h2><span>Results update automatically</span></div><div class="bracket"><div class="round"><small>SEMI-FINAL 01</small><article><b>France</b><span>—</span><b>Spain</b><span>—</span></article><small>SEMI-FINAL 02</small><article><b>England</b><span>—</span><b>Argentina</b><span>—</span></article></div><div class="connector"><i></i><i></i></div><div class="round final-round" id="final"><small>FINAL · 19 JULY</small><article><b id="final-home">Winner SF 01</b><span>—</span><b id="final-away">Winner SF 02</b><span>—</span></article><strong>NEW YORK NEW JERSEY<br>STADIUM</strong></div></div></section>
+  </main>
+  <footer><span>FIFA WORLD CUP 26™</span><p>This independent demo uses public live-score data when available. Confirm match information through official FIFA channels.</p><strong class="creator-credit" style="color:#d9ff36;font:10px 'DM Mono',monospace;letter-spacing:.5px;white-space:nowrap">DESIGNED &amp; BUILT BY <b style="font-size:12px">UTKARSH</b></strong><button id="refresh-button">↻ Refresh data</button></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="script.js"></script>
+</body>
+</html>
