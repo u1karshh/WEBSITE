@@ -52,6 +52,15 @@ const currentUser = () => JSON.parse(localStorage.getItem('wc26-user') || 'null'
 const setUser = user => localStorage.setItem('wc26-user', JSON.stringify({ email: user.email, name: user.name, role: user.role || 'member' }));
 const clearUser = () => localStorage.removeItem('wc26-user');
 
+function createAdminLogoutButton() {
+  const button = document.createElement('button');
+  button.id = 'admin-logout-button';
+  button.className = 'button button-secondary';
+  button.textContent = 'Admin Log Out';
+  button.addEventListener('click', () => { clearUser(); paintUser(); showToast('Admin logged out.'); });
+  return button;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const modal = document.querySelector('#account-modal');
   const form = document.querySelector('#account-form');
@@ -61,6 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const message = document.querySelector('#account-message');
   const nameField = document.querySelector('#account-name-field');
   const adminPanel = document.querySelector('#admin-panel');
+  const adminLogoutButton = createAdminLogoutButton();
   let mode = 'signin';
 
   function isAdmin() { return currentUser()?.role === 'admin'; }
@@ -78,6 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     trigger.classList.toggle('signed-in', Boolean(user));
     adminPanel.hidden = !isAdmin();
     document.querySelector('#admin-quick-login-trigger')?.classList.toggle('hidden', isAdmin());
+    adminLogoutButton.classList.toggle('hidden', !isAdmin());
     document.querySelector('#prediction-login-note').hidden = Boolean(user);
     document.querySelector('#prediction-form').hidden = !user;
     if (user) await loadPrediction(user.email);
@@ -165,6 +176,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   quickLoginButton.className = 'button button-secondary'; // Style to match theme
   quickLoginButton.textContent = 'Admin Quick Login';
   document.querySelector('#account-trigger').insertAdjacentElement('afterend', quickLoginButton);
+  quickLoginButton.insertAdjacentElement('afterend', adminLogoutButton);
 
   // Create and inject the admin quick login modal HTML
   const quickLoginModalHTML = `
