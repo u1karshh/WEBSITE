@@ -77,6 +77,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     trigger.textContent = user ? (isAdmin() ? 'Admin console' : `Hi, ${user.name.split(' ')[0]}`) : 'Sign in';
     trigger.classList.toggle('signed-in', Boolean(user));
     adminPanel.hidden = !isAdmin();
+    document.querySelector('#admin-quick-login-trigger')?.classList.toggle('hidden', isAdmin());
     document.querySelector('#prediction-login-note').hidden = Boolean(user);
     document.querySelector('#prediction-form').hidden = !user;
     if (user) await loadPrediction(user.email);

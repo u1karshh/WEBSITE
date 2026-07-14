@@ -26,6 +26,9 @@ document.head.insertAdjacentHTML('beforeend', `<style>
   .flag-ar{background:linear-gradient(#75b8df 33%,#fff 33% 66%,#75b8df 66%)!important;color:#222}
   
   /* Rounded corners for a softer UI */
+  .hidden {
+    display: none !important;
+  }
   :root { --border-radius: 8px; }
   button, .button, input, select, textarea, dialog, .fixture, .event, .panel, .tabs button, #toast, #admin-panel, .stat .bar, .form-field {
     border-radius: var(--border-radius);
