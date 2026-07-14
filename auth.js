@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const nameField = document.querySelector('#account-name-field');
   const adminPanel = document.querySelector('#admin-panel');
   const adminLogoutButton = createAdminLogoutButton();
-  let mode = 'signin';
+  let mode = 'signin'; // This will be 'signin' or 'register'
 
   function isAdmin() { return currentUser()?.role === 'admin'; }
   async function loadPrediction(email) {
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     trigger.classList.toggle('signed-in', Boolean(user));
     adminPanel.hidden = !isAdmin();
     document.querySelector('#admin-quick-login-trigger')?.classList.toggle('hidden', isAdmin());
-    adminLogoutButton.classList.toggle('hidden', !isAdmin());
+    adminLogoutButton.hidden = !isAdmin();
     document.querySelector('#prediction-login-note').hidden = Boolean(user);
     document.querySelector('#prediction-form').hidden = !user;
     if (user) await loadPrediction(user.email);
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   quickLoginButton.className = 'button button-secondary'; // Style to match theme
   quickLoginButton.textContent = 'Admin Quick Login';
   document.querySelector('#account-trigger').insertAdjacentElement('afterend', quickLoginButton);
-  quickLoginButton.insertAdjacentElement('afterend', adminLogoutButton);
+  document.querySelector('#account-trigger').insertAdjacentElement('afterend', adminLogoutButton);
 
   // Create and inject the admin quick login modal HTML
   const quickLoginModalHTML = `
