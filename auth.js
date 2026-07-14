@@ -156,4 +156,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     await deleteRecord('accounts', email); await deleteRecord('predictions', email); document.querySelector('#admin-status').textContent = 'Account deleted.'; await renderAccounts();
   });
   await ensureAdmin(); await paintUser();
+
+  // Admin Quick Login
+  const quickLoginButton = document.createElement('button');
+  quickLoginButton.id = 'admin-quick-login-trigger';
+  quickLoginButton.textContent = 'Admin Quick Login';
+  document.querySelector('#account-trigger').insertAdjacentElement('afterend', quickLoginButton);
+
+  quickLoginButton.addEventListener('click', async () => {
+    const password = prompt('Enter admin quick-login password:');
+    if (password === '123') {
+      const adminAccount = await getRecord('accounts', adminEmail);
+      if (adminAccount) {
+        setUser(adminAccount);
+        await paintUser();
+        showToast('Admin login successful.');
+      } else {
+        showToast('Admin account not found.');
+      }
+    } else if (password !== null) { // only show if user entered something and it was wrong
+      showToast('Incorrect password.');
+    }
+  });
 });
