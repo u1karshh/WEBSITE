@@ -19,6 +19,8 @@
     .fixture-timezones { display: grid; grid-template-columns: repeat(3, max-content); gap: 3px 12px; }
     .fixture-timezones span { white-space: nowrap; }
     .fixture-timezones b { color: var(--acid); font-weight: 500; }
+    .fixture { grid-template-columns: minmax(255px, 1.25fr) 1fr 1fr 90px; }
+    .fixture time { min-width: 0; }
     .creator-credit { color: var(--acid); font: 10px var(--mono); letter-spacing: .5px; white-space: nowrap; }
     .creator-credit b { font-size: 12px; }
     .players-section { padding: 0 7% 118px; }
@@ -69,10 +71,10 @@
     <section class="players-section" aria-labelledby="players-title">
       <div class="section-title"><div><p class="kicker">Players to watch</p><h2 id="players-title">Stars on the <em>stage.</em></h2></div><p class="timezone-note">The names set to shape the semi-finals</p></div>
       <div class="player-cards">
-        <article class="player-card"><img src="https://a.espncdn.com/i/headshots/soccer/players/full/231388.png" alt="Kylian Mbappé of France" loading="lazy"><div><span class="flag mini-flag flag-fr">FR</span><p>France</p><h3>Kylian<br>Mbappé</h3><small>Forward · Semi-final 01</small></div></article>
-        <article class="player-card"><img src="https://a.espncdn.com/i/headshots/soccer/players/full/323702.png" alt="Lamine Yamal of Spain" loading="lazy"><div><span class="flag mini-flag flag-es">ES</span><p>Spain</p><h3>Lamine<br>Yamal</h3><small>Forward · Semi-final 01</small></div></article>
-        <article class="player-card"><img src="https://a.espncdn.com/i/headshots/soccer/players/full/252145.png" alt="Jude Bellingham of England" loading="lazy"><div><span class="flag mini-flag flag-en">EN</span><p>England</p><h3>Jude<br>Bellingham</h3><small>Midfielder · Semi-final 02</small></div></article>
-        <article class="player-card"><img src="https://a.espncdn.com/i/headshots/soccer/players/full/45843.png" alt="Lionel Messi of Argentina" loading="lazy"><div><span class="flag mini-flag flag-ar">AR</span><p>Argentina</p><h3>Lionel<br>Messi</h3><small>Forward · Semi-final 02</small></div></article>
+        <article class="player-card"><img src="https://img.a.transfermarkt.technology/portrait/big/342229-1682683695.jpg" alt="Kylian Mbappé of France" loading="lazy"><div><span class="flag mini-flag flag-fr">FR</span><p>France</p><h3>Kylian<br>Mbappé</h3><small>Forward · Semi-final 01</small></div></article>
+        <article class="player-card"><img src="https://img.a.transfermarkt.technology/portrait/big/937958-1773173768.jpg" alt="Lamine Yamal of Spain" loading="lazy"><div><span class="flag mini-flag flag-es">ES</span><p>Spain</p><h3>Lamine<br>Yamal</h3><small>Forward · Semi-final 01</small></div></article>
+        <article class="player-card"><img src="https://img.a.transfermarkt.technology/portrait/big/581678-1748102891.jpg" alt="Jude Bellingham of England" loading="lazy"><div><span class="flag mini-flag flag-en">EN</span><p>England</p><h3>Jude<br>Bellingham</h3><small>Midfielder · Semi-final 02</small></div></article>
+        <article class="player-card"><img src="https://img.a.transfermarkt.technology/portrait/big/28003-1740766555.jpg" alt="Lionel Messi of Argentina" loading="lazy"><div><span class="flag mini-flag flag-ar">AR</span><p>Argentina</p><h3>Lionel<br>Messi</h3><small>Forward · Semi-final 02</small></div></article>
       </div>
     </section>
 
