@@ -97,6 +97,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       if (mode === 'register') {
         if (name.length < 2) throw new Error('Please enter your name.');
+        if (password.length < 8) throw new Error('Please use a password with at least 8 characters.');
         if (await getRecord('accounts', email)) throw new Error('An account already exists for this email.');
         const account = { email, name, role: 'member', createdAt: new Date().toISOString() }; await resetPassword(account, password); await saveRecord('accounts', account); setUser(account);
       } else {
@@ -142,7 +143,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (email !== originalEmail && await getRecord('accounts', email)) return document.querySelector('#admin-status').textContent = 'That email is already in use.';
     account.email = email; account.name = document.querySelector('#admin-name').value.trim(); account.role = document.querySelector('#admin-role').value;
     const password = document.querySelector('#admin-password').value;
-    if (password) { if (password.length < 5) return document.querySelector('#admin-status').textContent = 'Use at least 5 characters for a reset password.'; await resetPassword(account, password); }
+    if (password) { if (password.length < 8) return document.querySelector('#admin-status').textContent = 'Use at least 8 characters for a reset password.'; await resetPassword(account, password); }
     if (email !== originalEmail) { await deleteRecord('accounts', originalEmail); await deleteRecord('predictions', originalEmail); }
     await saveRecord('accounts', account);
     await saveRecord('predictions', { email, home: document.querySelector('#admin-home').value, away: document.querySelector('#admin-away').value, star: document.querySelector('#admin-star').value, updatedAt: new Date().toISOString() });
