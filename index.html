@@ -9,11 +9,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <style>
+    .section-title { align-items: end; gap: 24px; }
+    .timezone-picker { display: grid; gap: 7px; color: var(--dim); font: 9px var(--mono); letter-spacing: .6px; text-transform: uppercase; }
+    .timezone-picker select { min-width: 185px; border: 1px solid var(--line); background: #101419; color: var(--ink); padding: 10px; font: 10px var(--mono); text-transform: none; cursor: pointer; }
+    .creator-credit { color: var(--acid); font: 10px var(--mono); letter-spacing: .5px; white-space: nowrap; }
+    .creator-credit b { font-size: 12px; }
+    @media (max-width: 730px) { .section-title { align-items: flex-start; flex-direction: column; } .timezone-picker select { min-width: 0; width: 190px; } }
+  </style>
 </head>
 <body>
   <div class="noise"></div>
   <header class="topbar">
-    <a href="#overview" class="wordmark" aria-label="Utkarsh presents the World Cup 26 match centre"><span style="font:700 16px 'DM Mono',monospace;letter-spacing:.8px;color:#d9ff36;white-space:nowrap">UTKARSH PRESENTS</span> <b>WORLD CUP 26</b><i>™</i></a>
+    <a href="#overview" class="wordmark" aria-label="World Cup 26 match centre">FIFA <b>WORLD CUP 26</b><i>™</i></a>
     <nav><a class="active" href="#overview">Match Centre</a><a href="#bracket">Knockout</a><a href="#final">Final</a></nav>
     <div class="live-chip"><span></span><strong id="connection-status">LIVE DATA</strong><small id="updated-time">Updating</small></div>
   </header>
@@ -38,11 +46,11 @@
       <div class="panel" id="insight"><div class="insight-layout"><p class="big-quote">“One match. One way through.”</p><div><p class="kicker">The route to the final</p><p>Use the timeline to track every turning point — goals, cards, VAR reviews and substitutions — as official match information becomes available.</p><button class="watch-button" id="share-button">Share match centre <span>↗</span></button></div></div></div>
     </section>
 
-    <section class="semi-section"><div class="section-title"><p class="kicker">Semi-final schedule</p><h2>Two matches. <em>One final.</em></h2></div><div class="fixture-list" id="fixture-list"></div></section>
+    <section class="semi-section"><div class="section-title"><div><p class="kicker">Semi-final schedule</p><h2>Two matches. <em>One final.</em></h2></div><label class="timezone-picker" for="timezone-select">Show kick-off times in<select id="timezone-select"><option value="local">Your local time</option><option value="UTC">UTC</option><option value="Asia/Kolkata">India (IST)</option><option value="America/New_York">US Eastern</option><option value="America/Chicago">US Central</option><option value="Europe/London">UK time</option></select></label></div><div class="fixture-list" id="fixture-list"></div></section>
 
     <section class="bracket-section" id="bracket"><p class="kicker">The path</p><div class="bracket-heading"><h2>Knockout <em>bracket</em></h2><span>Results update automatically</span></div><div class="bracket"><div class="round"><small>SEMI-FINAL 01</small><article><b>France</b><span>—</span><b>Spain</b><span>—</span></article><small>SEMI-FINAL 02</small><article><b>England</b><span>—</span><b>Argentina</b><span>—</span></article></div><div class="connector"><i></i><i></i></div><div class="round final-round" id="final"><small>FINAL · 19 JULY</small><article><b id="final-home">Winner SF 01</b><span>—</span><b id="final-away">Winner SF 02</b><span>—</span></article><strong>NEW YORK NEW JERSEY<br>STADIUM</strong></div></div></section>
   </main>
-  <footer><span>FIFA WORLD CUP 26™</span><p>This independent demo uses public live-score data when available. Confirm match information through official FIFA channels.</p><button id="refresh-button">↻ Refresh data</button></footer>
+  <footer><span>FIFA WORLD CUP 26™</span><p>This independent demo uses public live-score data when available. Confirm match information through official FIFA channels.</p><strong class="creator-credit">DESIGNED &amp; BUILT BY <b>UTKARSH</b></strong><button id="refresh-button">↻ Refresh data</button></footer>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="script.js"></script>
 </body>
