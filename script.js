@@ -1,7 +1,7 @@
 const fallback = {
   fixtures: [
-    { home: 'France', away: 'Spain', homeCode: 'FR', awayCode: 'ES', date: '14 JUL', time: '20:00', venue: 'Dallas Stadium', status: 'Semi-final 01' },
-    { home: 'England', away: 'Argentina', homeCode: 'EN', awayCode: 'AR', date: '15 JUL', time: '20:00', venue: 'Atlanta Stadium', status: 'Semi-final 02' }
+    { home: 'France', away: 'Spain', homeCode: 'FR', awayCode: 'ES', startTime: '2026-07-15T01:00:00Z', venue: 'Dallas Stadium', status: 'Semi-final 01' },
+    { home: 'England', away: 'Argentina', homeCode: 'EN', awayCode: 'AR', startTime: '2026-07-16T00:00:00Z', venue: 'Atlanta Stadium', status: 'Semi-final 02' }
   ],
   events: [
     { minute: '—', type: 'info', title: 'Match centre is standing by', detail: 'Team news, line-ups and live events will appear here at kick-off.' },
@@ -16,18 +16,27 @@ const fixtureList = document.querySelector('#fixture-list');
 const toast = document.querySelector('#toast');
 let currentEvents = fallback.events;
 let eventIndex = 0;
+let displayedFixtures = [];
+let selectedTimeZone = 'local';
 
 document.head.insertAdjacentHTML('beforeend', '<style>.flag-en{background:linear-gradient(45deg,transparent 46%,#c9192d 47% 53%,transparent 54%),linear-gradient(-45deg,transparent 46%,#c9192d 47% 53%,transparent 54%),#f1f1ed!important;color:#111}.flag-ar{background:linear-gradient(#75b8df 33%,#fff 33% 66%,#75b8df 66%)!important;color:#222}</style>');
 
 function showToast(text) { toast.textContent = text; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2600); }
 function flagClass(name) { return flags[name] || 'flag-fr'; }
+function formatKickoff(fixture) {
+  if (!fixture.startTime) return `${fixture.date} · ${fixture.time}`;
+  const options = { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', hour12:false };
+  if (selectedTimeZone !== 'local') options.timeZone = selectedTimeZone;
+  return new Intl.DateTimeFormat('en-GB', options).format(new Date(fixture.startTime)).replace(',', ' ·').toUpperCase();
+}
 function renderTimeline(events) {
   currentEvents = events.length ? events : fallback.events;
   timeline.innerHTML = currentEvents.map(event => `<article class="event"><time>${event.minute || '—'}</time><div class="event-type"><span class="event-icon ${event.type || ''}">${event.type === 'goal' ? '●' : event.type === 'sub' ? '⇄' : 'i'}</span><b>${event.title}</b></div><span class="event-detail">${event.detail || ''}</span></article>`).join('');
   updateEventCursor();
 }
 function renderFixtures(fixtures) {
-  fixtureList.innerHTML = fixtures.map((f, index) => `<article class="fixture"><time>${f.date}<br>${f.time}</time><div class="side"><span class="flag mini-flag ${flagClass(f.home)}">${f.homeCode}</span>${f.home}</div><div class="side">${f.away}<span class="flag mini-flag ${flagClass(f.away)}">${f.awayCode}</span></div><span class="tag">${f.status || `Semi-final 0${index + 1}`}</span></article>`).join('');
+  displayedFixtures = fixtures;
+  fixtureList.innerHTML = fixtures.map((f, index) => `<article class="fixture"><time>${formatKickoff(f).replace(' · ', '<br>')}</time><div class="side"><span class="flag mini-flag ${flagClass(f.home)}">${f.homeCode}</span>${f.home}</div><div class="side">${f.away}<span class="flag mini-flag ${flagClass(f.away)}">${f.awayCode}</span></div><span class="tag">${f.status || `Semi-final 0${index + 1}`}</span></article>`).join('');
 }
 function updateEventCursor() { const event = currentEvents[eventIndex] || currentEvents[0]; document.querySelector('#event-minute').textContent = event.minute === '—' ? 'PRE-MATCH' : `${event.minute}'`; }
 function renderLineups(home = [], away = []) {
@@ -60,8 +69,7 @@ async function fetchLiveData() {
     const relevant = events.filter(e => /France|Spain|England|Argentina/.test(e.name || '')).map(e => {
       const c = e.competitions?.[0]?.competitors || [];
       const home = c.find(t => t.homeAway === 'home') || {}, away = c.find(t => t.homeAway === 'away') || {};
-      const d = new Date(e.date);
-      return { home:home.team?.displayName || 'TBD', away:away.team?.displayName || 'TBD', homeCode:home.team?.abbreviation || '', awayCode:away.team?.abbreviation || '', homeScore:home.score, awayScore:away.score, date:d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}).toUpperCase(), time:d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}), liveClock:e.status?.type?.detail, venue:e.competitions?.[0]?.venue?.fullName, status:e.status?.type?.shortDetail || 'FIFA WORLD CUP 26', eventId:e.id };
+      return { home:home.team?.displayName || 'TBD', away:away.team?.displayName || 'TBD', homeCode:home.team?.abbreviation || '', awayCode:away.team?.abbreviation || '', homeScore:home.score, awayScore:away.score, startTime:e.date, liveClock:e.status?.type?.detail, venue:e.competitions?.[0]?.venue?.fullName, status:e.status?.type?.shortDetail || 'FIFA WORLD CUP 26', eventId:e.id };
     });
     if (!relevant.length) throw new Error('No live semi-final feed');
     renderFixtures(relevant); setPrimary(relevant[0]);
