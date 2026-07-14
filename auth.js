@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const modal = document.querySelector('#account-modal');
   const form = document.querySelector('#account-form');
   const trigger = document.querySelector('#account-trigger');
+  trigger.classList.add('button'); // Add a class for consistent styling
   const modeButton = document.querySelector('#account-mode');
   const message = document.querySelector('#account-message');
   const nameField = document.querySelector('#account-name-field');
@@ -160,22 +161,37 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Admin Quick Login
   const quickLoginButton = document.createElement('button');
   quickLoginButton.id = 'admin-quick-login-trigger';
+  quickLoginButton.className = 'button button-secondary'; // Style to match theme
   quickLoginButton.textContent = 'Admin Quick Login';
   document.querySelector('#account-trigger').insertAdjacentElement('afterend', quickLoginButton);
 
-  quickLoginButton.addEventListener('click', async () => {
-    const password = prompt('Enter admin quick-login password:');
-    if (password === '123') {
-      const adminAccount = await getRecord('accounts', adminEmail);
-      if (adminAccount) {
-        setUser(adminAccount);
-        await paintUser();
-        showToast('Admin login successful.');
-      } else {
-        showToast('Admin account not found.');
-      }
-    } else if (password !== null) { // only show if user entered something and it was wrong
-      showToast('Incorrect password.');
+  const quickLoginModal = document.querySelector('#admin-quick-login-modal');
+  const quickLoginForm = document.querySelector('#admin-quick-login-form');
+  const quickLoginMessage = document.querySelector('#admin-quick-login-message');
+
+  quickLoginButton.addEventListener('click', () => {
+    quickLoginMessage.textContent = '';
+    quickLoginForm.reset();
+    quickLoginModal.showModal();
+  });
+
+  document.querySelector('#admin-quick-login-close').addEventListener('click', () => quickLoginModal.close());
+
+  quickLoginForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const password = quickLoginForm.elements.password.value;
+    if (password !== '123') {
+      return quickLoginMessage.textContent = 'Incorrect password.';
     }
+
+    const adminAccount = await getRecord('accounts', adminEmail);
+    if (!adminAccount) {
+      return quickLoginMessage.textContent = 'Admin account not found.';
+    }
+
+    setUser(adminAccount);
+    await paintUser();
+    quickLoginModal.close();
+    showToast('Admin login successful.');
   });
 });
