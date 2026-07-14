@@ -21,7 +21,19 @@
     .fixture-timezones b { color: var(--acid); font-weight: 500; }
     .creator-credit { color: var(--acid); font: 10px var(--mono); letter-spacing: .5px; white-space: nowrap; }
     .creator-credit b { font-size: 12px; }
-    @media (max-width: 730px) { .section-title { align-items: flex-start; flex-direction: column; } .fixture { grid-template-columns: 1fr 1fr; } .fixture time { grid-column: 1 / -1; } .fixture-timezones { grid-template-columns: repeat(2, max-content); } }
+    .players-section { padding: 0 7% 118px; }
+    .player-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin-top: 57px; background: var(--line); }
+    .player-card { min-height: 320px; position: relative; overflow: hidden; background: #151a1f; display: flex; align-items: end; padding: 20px; isolation: isolate; }
+    .player-card:after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(0deg, #101419 4%, rgba(16,20,25,.72) 42%, rgba(16,20,25,.02) 72%); }
+    .player-card img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: top center; filter: saturate(.85) contrast(1.08); transition: transform .4s ease; }
+    .player-card:hover img { transform: scale(1.045); }
+    .player-card .mini-flag { width: 26px; height: 26px; font-size: 7px; }
+    .player-card p { margin: 11px 0 3px; color: var(--acid); font: 9px var(--mono); letter-spacing: .8px; text-transform: uppercase; }
+    .player-card h3 { margin: 0; font: 25px/.88 var(--display); letter-spacing: -1.4px; }
+    .player-card small { display: block; margin-top: 10px; color: #aeb5b0; font: 9px var(--mono); letter-spacing: .2px; }
+    .flag-en { background: linear-gradient(45deg,transparent 46%,#c9192d 47% 53%,transparent 54%),linear-gradient(-45deg,transparent 46%,#c9192d 47% 53%,transparent 54%),#f1f1ed!important; color:#111; }
+    .flag-ar { background: linear-gradient(#75b8df 33%,#fff 33% 66%,#75b8df 66%)!important; color:#222; }
+    @media (max-width: 730px) { .section-title { align-items: flex-start; flex-direction: column; } .fixture { grid-template-columns: 1fr 1fr; } .fixture time { grid-column: 1 / -1; } .fixture-timezones { grid-template-columns: repeat(2, max-content); } .players-section { padding: 0 7% 80px; } .player-cards { grid-template-columns: repeat(2, 1fr); margin-top: 35px; } .player-card { min-height: 245px; padding: 15px; } .player-card h3 { font-size: 21px; } }
   </style>
 </head>
 <body>
@@ -53,6 +65,16 @@
     </section>
 
     <section class="semi-section"><div class="section-title"><div><p class="kicker">Semi-final schedule</p><h2>Two matches. <em>One final.</em></h2></div><p class="timezone-note">Kick-off times shown worldwide</p></div><div class="fixture-list" id="fixture-list"></div></section>
+
+    <section class="players-section" aria-labelledby="players-title">
+      <div class="section-title"><div><p class="kicker">Players to watch</p><h2 id="players-title">Stars on the <em>stage.</em></h2></div><p class="timezone-note">The names set to shape the semi-finals</p></div>
+      <div class="player-cards">
+        <article class="player-card"><img src="https://a.espncdn.com/i/headshots/soccer/players/full/231388.png" alt="Kylian Mbappé of France" loading="lazy"><div><span class="flag mini-flag flag-fr">FR</span><p>France</p><h3>Kylian<br>Mbappé</h3><small>Forward · Semi-final 01</small></div></article>
+        <article class="player-card"><img src="https://a.espncdn.com/i/headshots/soccer/players/full/323702.png" alt="Lamine Yamal of Spain" loading="lazy"><div><span class="flag mini-flag flag-es">ES</span><p>Spain</p><h3>Lamine<br>Yamal</h3><small>Forward · Semi-final 01</small></div></article>
+        <article class="player-card"><img src="https://a.espncdn.com/i/headshots/soccer/players/full/252145.png" alt="Jude Bellingham of England" loading="lazy"><div><span class="flag mini-flag flag-en">EN</span><p>England</p><h3>Jude<br>Bellingham</h3><small>Midfielder · Semi-final 02</small></div></article>
+        <article class="player-card"><img src="https://a.espncdn.com/i/headshots/soccer/players/full/45843.png" alt="Lionel Messi of Argentina" loading="lazy"><div><span class="flag mini-flag flag-ar">AR</span><p>Argentina</p><h3>Lionel<br>Messi</h3><small>Forward · Semi-final 02</small></div></article>
+      </div>
+    </section>
 
     <section class="bracket-section" id="bracket"><p class="kicker">The path</p><div class="bracket-heading"><h2>Knockout <em>bracket</em></h2><span>Results update automatically</span></div><div class="bracket"><div class="round"><small>SEMI-FINAL 01</small><article><b>France</b><span>—</span><b>Spain</b><span>—</span></article><small>SEMI-FINAL 02</small><article><b>England</b><span>—</span><b>Argentina</b><span>—</span></article></div><div class="connector"><i></i><i></i></div><div class="round final-round" id="final"><small>FINAL · 19 JULY</small><article><b id="final-home">Winner SF 01</b><span>—</span><b id="final-away">Winner SF 02</b><span>—</span></article><strong>NEW YORK NEW JERSEY<br>STADIUM</strong></div></div></section>
   </main>
