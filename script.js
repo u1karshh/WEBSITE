@@ -21,7 +21,19 @@ const timeZones = [
   ['ET', 'America/New_York'], ['CT', 'America/Chicago'], ['UK', 'Europe/London']
 ];
 
-document.head.insertAdjacentHTML('beforeend', '<style>.flag-en{background:linear-gradient(45deg,transparent 46%,#c9192d 47% 53%,transparent 54%),linear-gradient(-45deg,transparent 46%,#c9192d 47% 53%,transparent 54%),#f1f1ed!important;color:#111}.flag-ar{background:linear-gradient(#75b8df 33%,#fff 33% 66%,#75b8df 66%)!important;color:#222}</style>');
+document.head.insertAdjacentHTML('beforeend', `<style>
+  .flag-en{background:linear-gradient(45deg,transparent 46%,#c9192d 47% 53%,transparent 54%),linear-gradient(-45deg,transparent 46%,#c9192d 47% 53%,transparent 54%),#f1f1ed!important;color:#111}
+  .flag-ar{background:linear-gradient(#75b8df 33%,#fff 33% 66%,#75b8df 66%)!important;color:#222}
+  
+  /* Rounded corners for a softer UI */
+  :root { --border-radius: 8px; }
+  button, .button, input, select, textarea, dialog, .fixture, .event, .panel, .tabs button, #toast, #admin-panel, .stat .bar, .form-field {
+    border-radius: var(--border-radius);
+  }
+  .fixture, .event, .panel, #admin-panel, .stat .bar, dialog {
+    overflow: hidden; /* Prevents content from spilling out of rounded corners */
+  }
+</style>`);
 
 function showToast(text) { toast.textContent = text; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2600); }
 function flagClass(name) { return flags[name] || 'flag-fr'; }

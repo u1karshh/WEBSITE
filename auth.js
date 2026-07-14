@@ -165,6 +165,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   quickLoginButton.textContent = 'Admin Quick Login';
   document.querySelector('#account-trigger').insertAdjacentElement('afterend', quickLoginButton);
 
+  // Create and inject the admin quick login modal HTML
+  const quickLoginModalHTML = `
+    <dialog id="admin-quick-login-modal">
+      <form id="admin-quick-login-form" style="min-width: 300px;">
+        <h3>Admin Quick Login</h3>
+        <p>Enter the quick-login password to access the admin console.</p>
+        <div class="form-field">
+          <label for="admin-quick-login-password">Password</label>
+          <input type="password" id="admin-quick-login-password" name="password" required>
+        </div>
+        <p id="admin-quick-login-message" class="form-message" style="color: var(--color-error);"></p>
+        <div class="form-actions">
+          <button type="submit">Sign in</button>
+          <button type="button" id="admin-quick-login-close">Cancel</button>
+        </div>
+      </form>
+    </dialog>
+  `;
+  document.body.insertAdjacentHTML('beforeend', quickLoginModalHTML);
+
   const quickLoginModal = document.querySelector('#admin-quick-login-modal');
   const quickLoginForm = document.querySelector('#admin-quick-login-form');
   const quickLoginMessage = document.querySelector('#admin-quick-login-message');
