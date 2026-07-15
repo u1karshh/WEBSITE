@@ -118,6 +118,4 @@ document.querySelector('#prev-event').addEventListener('click', () => { eventInd
 document.querySelector('#next-event').addEventListener('click', () => { eventIndex = Math.min(currentEvents.length - 1, eventIndex + 1); updateEventCursor(); });
 document.querySelector('#watch-match').addEventListener('click', () => document.querySelector('#match-centre').scrollIntoView({behavior:'smooth'}));
 document.querySelector('#refresh-button').addEventListener('click', () => { fetchLiveData(); showToast('Refreshing match data…'); });
-document.querySelector('#remind-button').addEventListener('click', e => { e.currentTarget.classList.toggle('active'); showToast(e.currentTarget.classList.contains('active') ? 'Match reminder is set.' : 'Reminder removed.'); });
-document.querySelector('#share-button').addEventListener('click', async () => { try { await navigator.clipboard.writeText(location.href); showToast('Match centre link copied.'); } catch { showToast('Copy this page URL to share the match centre.'); } });
 renderStats(); fetchLiveData(); setInterval(fetchLiveData, 60000);
