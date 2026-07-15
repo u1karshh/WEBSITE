@@ -39,6 +39,12 @@ document.head.insertAdjacentHTML('beforeend', `<style>
 </style>`);
 
 function showToast(text) { toast.textContent = text; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2600); }
+function updateBackendStatusLabel() {
+  const status = document.querySelector('#update-status');
+  if (status) {
+    status.textContent = `Last updated from backend: ${new Date().toLocaleString()}`;
+  }
+}
 function flagClass(name) { return flags[name] || 'flag-fr'; }
 function formatKickoff(fixture, timeZone = 'local') {
   if (!fixture.startTime) return `${fixture.date} · ${fixture.time}`;
@@ -98,6 +104,7 @@ async function fetchLiveData() {
   } catch (error) {
     renderFixtures(fallback.fixtures); setPrimary(fallback.fixtures[0]); renderTimeline(fallback.events); renderLineups(); renderStats(); status.textContent = 'SCHEDULE MODE';
   }
+  updateBackendStatusLabel();
   document.querySelector('#updated-time').textContent = `Updated ${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}`;
 }
 async function fetchMatchDetails(id) {

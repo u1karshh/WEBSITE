@@ -54,7 +54,7 @@
   </div>
 
   <script>
-    function updateTime() {
+    function updateClock() {
       const now = new Date();
       const time = now.toLocaleTimeString('en-GB', {
         hour12: false,
@@ -64,11 +64,18 @@
       });
       const ms = String(now.getMilliseconds()).padStart(3, '0');
       document.getElementById('live-time').textContent = `${time}.${ms}`;
-      document.getElementById('update-status').textContent = `Last updated from backend: ${now.toLocaleString()}`;
     }
 
-    updateTime();
-    setInterval(updateTime, 1);
+    function updateBackendStatus() {
+      const status = document.getElementById('update-status');
+      if (status) {
+        status.textContent = `Last updated from backend: ${new Date().toLocaleString()}`;
+      }
+    }
+
+    updateClock();
+    updateBackendStatus();
+    setInterval(updateClock, 1);
   </script>
 </body>
 </html>
