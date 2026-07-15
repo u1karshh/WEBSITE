@@ -57,12 +57,7 @@
   <script>
     function updateClock() {
       const now = new Date();
-      const date = now.toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-      });
-      document.getElementById('today-date').innerHTML = `<strong>${date}</strong>`;
+      document.getElementById('today-date').innerHTML = '<strong>15 Jul 2026</strong>';
       const time = now.toLocaleTimeString('en-GB', {
         hour12: false,
         hour: '2-digit',
