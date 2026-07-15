@@ -203,6 +203,28 @@
       border: 1px solid rgba(255,255,255,0.16);
       box-shadow: 0 12px 30px rgba(0,0,0,0.35);
       background: linear-gradient(180deg, #07111d, #0c1725);
+      touch-action: none;
+    }
+    .mobile-controls {
+      display: none;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .control-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 700;
+      background: rgba(127,209,255,0.18);
+      color: #f2fdff;
+      border: 1px solid rgba(127,209,255,0.32);
+      cursor: pointer;
+      min-width: 78px;
+    }
+    .control-btn:active {
+      transform: scale(0.97);
+      background: rgba(127,209,255,0.32);
     }
     .puzzle-grid {
       display: grid;
@@ -251,6 +273,12 @@
       }
       .game-panel-header {
         flex-direction: column;
+      }
+      .mobile-controls {
+        display: flex;
+      }
+      .puzzle-grid {
+        width: min(100%, 360px);
       }
     }
   </style>
@@ -345,6 +373,11 @@
             <button class="btn-small" id="runner-restart">Restart run</button>
             <span style="color:#cfe4ea;">Jump over hazards and grab the glowing pickups.</span>
           </div>
+          <div class="mobile-controls">
+            <button class="control-btn" type="button" id="runner-left">← Left</button>
+            <button class="control-btn" type="button" id="runner-right">Right →</button>
+            <button class="control-btn" type="button" id="runner-jump">Jump</button>
+          </div>
           <canvas id="runner-canvas" width="720" height="420"></canvas>
         </div>`;
 
@@ -356,6 +389,9 @@
       const speedEl = document.getElementById('runner-speed');
       const messageEl = document.getElementById('runner-message');
       const restartBtn = document.getElementById('runner-restart');
+      const leftBtn = document.getElementById('runner-left');
+      const rightBtn = document.getElementById('runner-right');
+      const jumpBtn = document.getElementById('runner-jump');
       const lanes = [180, 360, 540];
       const keys = { left: false, right: false, jump: false };
       const state = {
@@ -443,6 +479,23 @@
         if (key === 'arrowleft' || key === 'a') keys.left = false;
         if (key === 'arrowright' || key === 'd') keys.right = false;
         if (key === ' ' || key === 'arrowup' || key === 'w') keys.jump = false;
+      }
+
+      function bindMobileButton(button, action) {
+        const start = () => {
+          if (action === 'left') keys.left = true;
+          if (action === 'right') keys.right = true;
+          if (action === 'jump') keys.jump = true;
+        };
+        const end = () => {
+          if (action === 'left') keys.left = false;
+          if (action === 'right') keys.right = false;
+          if (action === 'jump') keys.jump = false;
+        };
+        button.addEventListener('pointerdown', (event) => { event.preventDefault(); start(); });
+        button.addEventListener('pointerup', end);
+        button.addEventListener('pointerleave', end);
+        button.addEventListener('pointercancel', end);
       }
 
       function update(dt) {
@@ -607,6 +660,9 @@
       window.addEventListener('keydown', handleKeyDown);
       window.addEventListener('keyup', handleKeyUp);
       restartBtn.addEventListener('click', reset);
+      bindMobileButton(leftBtn, 'left');
+      bindMobileButton(rightBtn, 'right');
+      bindMobileButton(jumpBtn, 'jump');
       activeCleanup = cleanup;
       reset();
       activeFrame = requestAnimationFrame(loop);
@@ -808,12 +864,16 @@
             <div class="metric"><span class="label">Score</span><span class="value" id="shooter-score">0</span></div>
             <div class="metric"><span class="label">Health</span><span class="value" id="shooter-health">100</span></div>
             <div class="metric"><span class="label">Wave</span><span class="value" id="shooter-wave">1</span></div>
-            <div class="metric"><span class="label">Burst</span><span class="value" id="shooter-burst">0%</span></div>
+            <div class="metric"><span class="label">Burst</span><span class="value" id="shooter-burst-value">0%</span></div>
           </div>
           <div class="message-line" id="shooter-message">Hold the line. Every meteor you destroy powers the burst cannon.</div>
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
             <button class="btn-small" id="shooter-restart">Restart defense</button>
             <span style="color:#cfe4ea;">Destroy incoming comets before they reach the shield line.</span>
+          </div>
+          <div class="mobile-controls">
+            <button class="control-btn" type="button" id="shooter-fire-btn">Fire</button>
+            <button class="control-btn" type="button" id="shooter-burst-btn">Burst</button>
           </div>
           <canvas id="shooter-canvas" width="720" height="420"></canvas>
         </div>`;
@@ -823,9 +883,11 @@
       const scoreEl = document.getElementById('shooter-score');
       const healthEl = document.getElementById('shooter-health');
       const waveEl = document.getElementById('shooter-wave');
-      const burstEl = document.getElementById('shooter-burst');
+      const burstEl = document.getElementById('shooter-burst-value');
       const messageEl = document.getElementById('shooter-message');
       const restartBtn = document.getElementById('shooter-restart');
+      const fireBtn = document.getElementById('shooter-fire-btn');
+      const burstBtn = document.getElementById('shooter-burst-btn');
       const state = {
         score: 0,
         health: 100,
@@ -895,16 +957,19 @@
         state.enemies.push({ x: Math.random() * 720, y: -40, vx: (Math.random() - 0.5) * 90, vy: 140 + state.wave * 35, size, hp, type, wobble: Math.random() * Math.PI * 2 });
       }
 
-      function handleMouseMove(event) {
+      function handlePointerMove(event) {
         const rect = canvas.getBoundingClientRect();
         state.playerX = ((event.clientX - rect.left) / rect.width) * 720;
       }
 
-      function handleMouseDown() {
+      function handlePointerDown(event) {
+        event.preventDefault();
+        canvas.setPointerCapture(event.pointerId);
+        handlePointerMove(event);
         state.firing = true;
       }
 
-      function handleMouseUp() {
+      function handlePointerUp() {
         state.firing = false;
       }
 
@@ -1048,14 +1113,21 @@
       }
 
       const cleanup = () => {
-        canvas.removeEventListener('mousemove', handleMouseMove);
-        canvas.removeEventListener('mousedown', handleMouseDown);
-        canvas.removeEventListener('mouseup', handleMouseUp);
+        canvas.removeEventListener('pointermove', handlePointerMove);
+        canvas.removeEventListener('pointerdown', handlePointerDown);
+        canvas.removeEventListener('pointerup', handlePointerUp);
+        canvas.removeEventListener('pointercancel', handlePointerUp);
         window.removeEventListener('keydown', handleKeyDown);
       };
-      canvas.addEventListener('mousemove', handleMouseMove);
-      canvas.addEventListener('mousedown', handleMouseDown);
-      canvas.addEventListener('mouseup', handleMouseUp);
+      canvas.addEventListener('pointermove', handlePointerMove);
+      canvas.addEventListener('pointerdown', handlePointerDown);
+      canvas.addEventListener('pointerup', handlePointerUp);
+      canvas.addEventListener('pointercancel', handlePointerUp);
+      fireBtn.addEventListener('pointerdown', (event) => { event.preventDefault(); state.firing = true; });
+      fireBtn.addEventListener('pointerup', handlePointerUp);
+      fireBtn.addEventListener('pointerleave', handlePointerUp);
+      fireBtn.addEventListener('pointercancel', handlePointerUp);
+      burstBtn.addEventListener('pointerdown', (event) => { event.preventDefault(); burstShot(); });
       window.addEventListener('keydown', handleKeyDown);
       restartBtn.addEventListener('click', reset);
       activeCleanup = cleanup;
