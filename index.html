@@ -54,6 +54,125 @@
       font-weight: 700;
       box-shadow: 0 6px 20px rgba(0,0,0,0.2);
     }
+    .games-shell {
+      margin-top: 28px;
+      width: min(980px, 100%);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 16px 50px rgba(0,0,0,0.25);
+    }
+    .section-title {
+      margin: 0 0 14px;
+      font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #ffffff;
+    }
+    .game-menu {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .game-card {
+      text-align: left;
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+      color: #ffffff;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+    .game-card:hover, .game-card.active {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.2);
+      border-color: #7fd1ff;
+    }
+    .game-card strong {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+    .game-card small {
+      display: block;
+      color: #bcdfe9;
+      line-height: 1.4;
+    }
+    .game-view {
+      margin-top: 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(3,8,15,0.92);
+      padding: 16px;
+      min-height: 380px;
+    }
+    .game-intro {
+      text-align: center;
+      color: #cfe8f0;
+      font-size: 1rem;
+      line-height: 1.6;
+      padding: 8px 0 12px;
+    }
+    .game-screen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .game-shell canvas {
+      width: 100%;
+      max-width: 560px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+      background: linear-gradient(180deg, #07111d, #0c1725);
+    }
+    .game-shell .puzzle-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      width: min(360px, 100%);
+    }
+    .game-shell .puzzle-tile {
+      aspect-ratio: 1;
+      border: none;
+      border-radius: 14px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+      cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+    }
+    .game-shell .puzzle-tile:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.22);
+    }
+    .game-shell .puzzle-hud, .game-shell .runner-hud {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+      color: #e8f7ff;
+      font-size: 0.95rem;
+      flex-wrap: wrap;
+    }
+    .game-shell .btn-small {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 700;
+      background: #7fd1ff;
+      color: #04131d;
+      cursor: pointer;
+    }
+    @media (max-width: 760px) {
+      .game-menu {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -61,6 +180,19 @@
     <h1 class="heading">UTKARSH IS WORKING ON THE WEBSITE</h1>
     <div id="today-date" class="today-date"><strong></strong></div>
     <div id="live-time" class="live-time">00:00:00.000</div>
+  </div>
+
+  <div class="games-shell">
+    <h2 class="section-title">Choose a game</h2>
+    <div class="game-menu">
+      <button class="game-card active" data-game="runner"><strong>Neon Drift</strong><small>High-speed dodge run with glowing neon hazards.</small></button>
+      <button class="game-card" data-game="puzzle"><strong>Astra Match</strong><small>Swap and chain luminous tiles into explosive combos.</small></button>
+      <button class="game-card" data-game="shooter"><strong>Comet Clash</strong><small>Defend the sky by blasting falling meteors in real time.</small></button>
+    </div>
+    <div class="game-view">
+      <div id="game-intro" class="game-intro">Start with one of the premium experiences above. Each game is crafted to feel polished, cinematic, and responsive.</div>
+      <div id="game-screen" class="game-screen"></div>
+    </div>
   </div>
 
   <script>
@@ -90,6 +222,293 @@
 
     updateClock();
     setInterval(updateClock, 1);
+
+    const gameButtons = Array.from(document.querySelectorAll('.game-card'));
+    const gameScreen = document.getElementById('game-screen');
+    const gameIntro = document.getElementById('game-intro');
+
+    function clearGameScreen() {
+      gameScreen.innerHTML = '';
+      gameIntro.style.display = 'block';
+    }
+
+    function startRunnerGame() {
+      gameIntro.style.display = 'none';
+      gameScreen.innerHTML = '<div class="runner-hud"><span id="runner-score">Score: 0</span><span>Move with ← → or A / D</span><button class="btn-small" id="runner-restart">Restart</button></div><canvas id="runner-canvas" width="560" height="320"></canvas>';
+      const canvas = document.getElementById('runner-canvas');
+      const ctx = canvas.getContext('2d');
+      const keys = { left: false, right: false };
+      let score = 0;
+      let over = false;
+      let playerX = 280;
+      let playerY = 240;
+      let speed = 0;
+      const stars = Array.from({ length: 40 }, () => ({ x: Math.random() * 560, y: Math.random() * 320, r: Math.random() * 1.6 + 0.4 }));
+      const obstacles = [];
+      const scoreEl = document.getElementById('runner-score');
+      const restartBtn = document.getElementById('runner-restart');
+
+      function reset() {
+        score = 0;
+        over = false;
+        playerX = 280;
+        speed = 0;
+        obstacles.length = 0;
+        for (let i = 0; i < 4; i += 1) obstacles.push({ x: 560 + i * 140, y: 220 + (i % 2) * 40, w: 30, h: 28 });
+      }
+
+      function handleKeyDown(event) {
+        if (event.key === 'ArrowLeft' || event.key.toLowerCase() === 'a') keys.left = true;
+        if (event.key === 'ArrowRight' || event.key.toLowerCase() === 'd') keys.right = true;
+        if (event.key === ' ' && over) reset();
+      }
+      function handleKeyUp(event) {
+        if (event.key === 'ArrowLeft' || event.key.toLowerCase() === 'a') keys.left = false;
+        if (event.key === 'ArrowRight' || event.key.toLowerCase() === 'd') keys.right = false;
+      }
+      window.addEventListener('keydown', handleKeyDown);
+      window.addEventListener('keyup', handleKeyUp);
+      restartBtn.addEventListener('click', reset);
+
+      function update() {
+        if (over) return;
+        if (keys.left) playerX -= 6;
+        if (keys.right) playerX += 6;
+        playerX = Math.max(24, Math.min(536, playerX));
+        if (Math.random() < 0.025) obstacles.push({ x: 560, y: 180 + Math.random() * 120, w: 30, h: 22 + Math.random() * 18 });
+        for (const obs of obstacles) {
+          obs.x -= 5 + speed * 0.4;
+          if (obs.x + obs.w < 0) obs.dead = true;
+          if (playerX + 16 > obs.x && playerX - 16 < obs.x + obs.w && playerY + 16 > obs.y && playerY - 16 < obs.y + obs.h) over = true;
+        }
+        while (obstacles.length && obstacles[0].dead) obstacles.shift();
+        score += 1;
+        speed = Math.min(3.8, speed + 0.004);
+        scoreEl.textContent = `Score: ${Math.floor(score / 4)}`;
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        g.addColorStop(0, '#06111d');
+        g.addColorStop(1, '#0d1e2b');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        stars.forEach(star => {
+          star.y += 0.8;
+          if (star.y > 320) { star.y = 0; star.x = Math.random() * 560; }
+          ctx.fillStyle = '#dff7ff';
+          ctx.beginPath(); ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2); ctx.fill();
+        });
+        ctx.fillStyle = '#7fd1ff';
+        ctx.beginPath(); ctx.arc(playerX, playerY, 16, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ff5c7a';
+        obstacles.forEach(obs => { ctx.fillRect(obs.x, obs.y, obs.w, obs.h); });
+        if (over) {
+          ctx.fillStyle = 'rgba(255,255,255,0.9)';
+          ctx.font = 'bold 32px Arial';
+          ctx.fillText('Run Complete', 150, 150);
+          ctx.font = '16px Arial';
+          ctx.fillText('Press space or restart to play again', 150, 182);
+        }
+      }
+
+      function loop() {
+        update();
+        draw();
+        requestAnimationFrame(loop);
+      }
+
+      reset();
+      loop();
+      window.addEventListener('beforeunload', () => {
+        window.removeEventListener('keydown', handleKeyDown);
+        window.removeEventListener('keyup', handleKeyUp);
+      });
+    }
+
+    function startPuzzleGame() {
+      gameIntro.style.display = 'none';
+      gameScreen.innerHTML = '<div class="runner-hud"><span id="puzzle-score">Score: 0</span><span>Swap adjacent glowing tiles to make 3 in a row</span><button class="btn-small" id="puzzle-reset">Reset</button></div><div id="puzzle-grid" class="puzzle-grid"></div>';
+      const gridEl = document.getElementById('puzzle-grid');
+      const scoreEl = document.getElementById('puzzle-score');
+      const resetBtn = document.getElementById('puzzle-reset');
+      const colors = ['#ff6b6b', '#4ecdc4', '#ffd166', '#7d7cff', '#8bff8f'];
+      let grid = [];
+      let selected = null;
+      let score = 0;
+
+      function makeGrid() {
+        grid = Array.from({ length: 25 }, () => colors[Math.floor(Math.random() * colors.length)]);
+      }
+
+      function render() {
+        gridEl.innerHTML = '';
+        grid.forEach((color, index) => {
+          const tile = document.createElement('button');
+          tile.className = 'puzzle-tile';
+          tile.style.background = color;
+          tile.dataset.index = index;
+          tile.addEventListener('click', () => handleTile(index));
+          gridEl.appendChild(tile);
+        });
+        scoreEl.textContent = `Score: ${score}`;
+      }
+
+      function handleTile(index) {
+        if (selected === null) {
+          selected = index;
+          return;
+        }
+        const rowA = Math.floor(selected / 5);
+        const colA = selected % 5;
+        const rowB = Math.floor(index / 5);
+        const colB = index % 5;
+        if (Math.abs(rowA - rowB) + Math.abs(colA - colB) !== 1) {
+          selected = index;
+          return;
+        }
+        const temp = grid[selected];
+        grid[selected] = grid[index];
+        grid[index] = temp;
+        if (!checkForMatches()) {
+          grid[selected] = grid[index];
+          grid[index] = temp;
+        } else {
+          score += 1;
+        }
+        selected = null;
+        render();
+      }
+
+      function checkForMatches() {
+        const toClear = new Set();
+        for (let row = 0; row < 5; row += 1) {
+          for (let col = 0; col < 5; col += 1) {
+            const color = grid[row * 5 + col];
+            let count = 1;
+            for (let c = col + 1; c < 5; c += 1) if (grid[row * 5 + c] === color) count += 1; else break;
+            if (count >= 3) for (let c = 0; c < count; c += 1) toClear.add(row * 5 + col + c);
+            count = 1;
+            for (let r = row + 1; r < 5; r += 1) if (grid[r * 5 + col] === color) count += 1; else break;
+            if (count >= 3) for (let r = 0; r < count; r += 1) toClear.add((row + r) * 5 + col);
+          }
+        }
+        if (toClear.size) {
+          toClear.forEach(index => { grid[index] = null; });
+          grid = grid.filter(Boolean);
+          while (grid.length < 25) grid.push(colors[Math.floor(Math.random() * colors.length)]);
+          return true;
+        }
+        return false;
+      }
+
+      resetBtn.addEventListener('click', () => {
+        score = 0;
+        makeGrid();
+        render();
+      });
+      makeGrid();
+      render();
+    }
+
+    function startShooterGame() {
+      gameIntro.style.display = 'none';
+      gameScreen.innerHTML = '<div class="runner-hud"><span id="shooter-score">Score: 0</span><span>Click to fire, dodge the meteors</span><button class="btn-small" id="shooter-restart">Restart</button></div><canvas id="shooter-canvas" width="560" height="320"></canvas>';
+      const canvas = document.getElementById('shooter-canvas');
+      const ctx = canvas.getContext('2d');
+      const state = { score: 0, playerX: 280, bullets: [], meteors: [], over: false };
+      const scoreEl = document.getElementById('shooter-score');
+      const restartBtn = document.getElementById('shooter-restart');
+
+      function reset() {
+        state.score = 0;
+        state.playerX = 280;
+        state.bullets = [];
+        state.meteors = [];
+        state.over = false;
+      }
+
+      function shoot() {
+        if (state.over) return;
+        state.bullets.push({ x: state.playerX, y: 280, r: 4 });
+      }
+
+      canvas.addEventListener('mousemove', (event) => {
+        const rect = canvas.getBoundingClientRect();
+        state.playerX = ((event.clientX - rect.left) / rect.width) * 560;
+      });
+      canvas.addEventListener('click', shoot);
+      restartBtn.addEventListener('click', reset);
+
+      function update() {
+        if (state.over) return;
+        if (Math.random() < 0.03) state.meteors.push({ x: Math.random() * 560, y: -20, r: 12 + Math.random() * 12 });
+        state.bullets.forEach(b => { b.y -= 10; });
+        state.bullets = state.bullets.filter(b => b.y > -10);
+        state.meteors.forEach(m => { m.y += 3; });
+        state.meteors = state.meteors.filter(m => m.y < 340);
+        state.bullets.forEach(b => {
+          state.meteors.forEach((m, index) => {
+            if (Math.abs(b.x - m.x) < 18 && Math.abs(b.y - m.y) < 18) {
+              state.score += 1;
+              state.bullets.splice(state.bullets.indexOf(b), 1);
+              state.meteors.splice(index, 1);
+            }
+          });
+        });
+        state.meteors.forEach(m => {
+          if (m.y + m.r > 280 && Math.abs(m.x - state.playerX) < 20) state.over = true;
+        });
+        scoreEl.textContent = `Score: ${state.score}`;
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        g.addColorStop(0, '#050713');
+        g.addColorStop(1, '#111d31');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#7fd1ff';
+        ctx.beginPath(); ctx.arc(state.playerX, 280, 18, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ff6b6b';
+        state.meteors.forEach(m => { ctx.beginPath(); ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2); ctx.fill(); });
+        ctx.fillStyle = '#ffd166';
+        state.bullets.forEach(b => { ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill(); });
+        if (state.over) {
+          ctx.fillStyle = 'rgba(255,255,255,0.95)';
+          ctx.font = 'bold 28px Arial';
+          ctx.fillText('Sky Protected', 150, 148);
+          ctx.font = '16px Arial';
+          ctx.fillText('Click restart to play again', 150, 180);
+        }
+      }
+
+      function loop() {
+        update();
+        draw();
+        requestAnimationFrame(loop);
+      }
+
+      reset();
+      loop();
+    }
+
+    function loadGame(game) {
+      clearGameScreen();
+      if (game === 'runner') startRunnerGame();
+      if (game === 'puzzle') startPuzzleGame();
+      if (game === 'shooter') startShooterGame();
+    }
+
+    gameButtons.forEach(button => button.addEventListener('click', () => {
+      gameButtons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+      loadGame(button.dataset.game);
+    }));
+
+    loadGame('runner');
 
   </script>
 </body>
