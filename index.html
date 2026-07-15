@@ -72,9 +72,12 @@
       color: #ffffff;
     }
     .game-menu {
-      display: grid;
+      display: none;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
+    }
+    .game-menu.visible {
+      display: grid;
     }
     .game-card {
       text-align: left;
@@ -104,12 +107,87 @@
       line-height: 1.4;
     }
     .game-view {
+      display: none;
       margin-top: 16px;
       border-radius: 20px;
       border: 1px solid rgba(255,255,255,0.12);
       background: rgba(3,8,15,0.92);
       padding: 16px;
       min-height: 480px;
+    }
+    .game-view.visible {
+      display: block;
+    }
+    .gate-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(2, 6, 12, 0.95);
+      backdrop-filter: blur(8px);
+    }
+    .gate-card {
+      width: min(560px, 100%);
+      padding: 24px;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(8, 16, 28, 0.95);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.35);
+      text-align: center;
+    }
+    .gate-eyebrow {
+      margin: 0 0 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.24em;
+      color: #7fd1ff;
+      font-size: 0.74rem;
+      font-weight: 800;
+    }
+    .gate-title {
+      margin: 0 0 8px;
+      font-size: clamp(1.35rem, 3vw, 1.9rem);
+      color: #ffffff;
+    }
+    .gate-copy {
+      margin: 0 0 16px;
+      color: #cfe4ea;
+      line-height: 1.6;
+    }
+    .choice-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 12px;
+    }
+    .choice-grid.game-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .choice-card {
+      border: 1px solid rgba(127,209,255,0.24);
+      border-radius: 16px;
+      background: rgba(127,209,255,0.12);
+      color: #f2fdff;
+      padding: 14px 12px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 1rem;
+      transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+    }
+    .choice-card:hover, .choice-card.active {
+      transform: translateY(-1px);
+      background: rgba(127,209,255,0.24);
+      border-color: #7fd1ff;
+    }
+    .gate-hint {
+      margin-top: 14px;
+      color: #8cced9;
+      font-size: 0.95rem;
+    }
+    .hidden {
+      display: none !important;
     }
     .game-intro {
       text-align: center;
@@ -291,15 +369,29 @@
   </div>
 
   <div class="games-shell">
-    <h2 class="section-title">Choose a game</h2>
-    <div class="game-menu">
-      <button class="game-card active" data-game="runner"><strong>Neon Drift</strong><small>High-speed dodge run with glowing neon hazards.</small></button>
-      <button class="game-card" data-game="puzzle"><strong>Astra Match</strong><small>Swap and chain luminous tiles into explosive combos.</small></button>
-      <button class="game-card" data-game="shooter"><strong>Comet Clash</strong><small>Defend the sky by blasting falling meteors in real time.</small></button>
-    </div>
-    <div class="game-view">
-      <div id="game-intro" class="game-intro">Start with one of the premium experiences above. Each game is crafted to feel polished, cinematic, and responsive.</div>
+    <h2 class="section-title" id="section-title" style="display:none;">Choose a game</h2>
+    <div id="game-menu" class="game-menu"></div>
+    <div id="game-view" class="game-view">
+      <div id="game-intro" class="game-intro">Choose a game from the launch gate to begin.</div>
       <div id="game-screen" class="game-screen"></div>
+    </div>
+  </div>
+
+  <div id="gate-overlay" class="gate-overlay">
+    <div class="gate-card">
+      <p class="gate-eyebrow">Launch gate</p>
+      <h2 class="gate-title" id="gate-title">Are you on mobile or PC?</h2>
+      <p class="gate-copy" id="gate-copy">Choose your setup first so I can enable the right controls.</p>
+      <div class="choice-grid" id="device-choice">
+        <button class="choice-card" data-device="mobile">Mobile</button>
+        <button class="choice-card" data-device="pc">PC</button>
+      </div>
+      <div class="choice-grid game-grid hidden" id="game-choice">
+        <button class="choice-card" data-game="runner">Neon Drift</button>
+        <button class="choice-card" data-game="puzzle">Astra Match</button>
+        <button class="choice-card" data-game="shooter">Comet Clash</button>
+      </div>
+      <div class="gate-hint" id="gate-hint">Mobile uses touch controls. PC uses keyboard and mouse.</div>
     </div>
   </div>
 
@@ -331,11 +423,21 @@
     updateClock();
     setInterval(updateClock, 1);
 
-    const gameButtons = Array.from(document.querySelectorAll('.game-card'));
     const gameScreen = document.getElementById('game-screen');
     const gameIntro = document.getElementById('game-intro');
+    const gameView = document.getElementById('game-view');
+    const sectionTitle = document.getElementById('section-title');
+    const gateOverlay = document.getElementById('gate-overlay');
+    const gateTitle = document.getElementById('gate-title');
+    const gateCopy = document.getElementById('gate-copy');
+    const gateHint = document.getElementById('gate-hint');
+    const deviceChoice = document.getElementById('device-choice');
+    const gameChoice = document.getElementById('game-choice');
+    const deviceButtons = Array.from(document.querySelectorAll('[data-device]'));
+    const gameChoiceButtons = Array.from(document.querySelectorAll('#game-choice .choice-card'));
     let activeCleanup = () => {};
     let activeFrame = null;
+    let selectedDevice = null;
 
     function clearGameScreen() {
       if (activeFrame) {
@@ -347,6 +449,34 @@
       gameScreen.innerHTML = '';
       gameIntro.style.display = 'block';
     }
+
+    function showGateStep(step) {
+      deviceChoice.classList.toggle('hidden', step !== 'device');
+      gameChoice.classList.toggle('hidden', step !== 'game');
+      if (step === 'device') {
+        gateTitle.textContent = 'Are you on mobile or PC?';
+        gateCopy.textContent = 'Choose your setup first so I can enable the right controls.';
+        gateHint.textContent = 'Mobile uses touch controls. PC uses keyboard and mouse.';
+      } else {
+        gateTitle.textContent = 'Which game do you want to play?';
+        gateCopy.textContent = 'Pick a game and the experience will appear instantly.';
+        gateHint.textContent = selectedDevice === 'mobile'
+          ? 'Touch controls are ready for phones and tablets.'
+          : 'Keyboard and mouse controls are ready for desktop play.';
+      }
+    }
+
+    deviceButtons.forEach(button => button.addEventListener('click', () => {
+      selectedDevice = button.dataset.device;
+      showGateStep('game');
+    }));
+
+    gameChoiceButtons.forEach(button => button.addEventListener('click', () => {
+      gateOverlay.classList.add('hidden');
+      sectionTitle.style.display = 'block';
+      gameView.classList.add('visible');
+      loadGame(button.dataset.game);
+    }));
 
     function startRunnerGame() {
       gameIntro.style.display = 'none';
@@ -373,7 +503,7 @@
             <button class="btn-small" id="runner-restart">Restart run</button>
             <span style="color:#cfe4ea;">Jump over hazards and grab the glowing pickups.</span>
           </div>
-          <div class="mobile-controls">
+          <div class="mobile-controls" id="runner-mobile-controls" style="display:${selectedDevice === 'mobile' ? 'flex' : 'none'};">
             <button class="control-btn" type="button" id="runner-left">← Left</button>
             <button class="control-btn" type="button" id="runner-right">Right →</button>
             <button class="control-btn" type="button" id="runner-jump">Jump</button>
@@ -871,7 +1001,7 @@
             <button class="btn-small" id="shooter-restart">Restart defense</button>
             <span style="color:#cfe4ea;">Destroy incoming comets before they reach the shield line.</span>
           </div>
-          <div class="mobile-controls">
+          <div class="mobile-controls" id="shooter-mobile-controls" style="display:${selectedDevice === 'mobile' ? 'flex' : 'none'};">
             <button class="control-btn" type="button" id="shooter-fire-btn">Fire</button>
             <button class="control-btn" type="button" id="shooter-burst-btn">Burst</button>
           </div>
@@ -1142,13 +1272,7 @@
       if (game === 'shooter') startShooterGame();
     }
 
-    gameButtons.forEach(button => button.addEventListener('click', () => {
-      gameButtons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-      loadGame(button.dataset.game);
-    }));
-
-    loadGame('runner');
+    showGateStep('device');
   </script>
 </body>
 </html>
