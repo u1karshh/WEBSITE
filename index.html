@@ -297,17 +297,64 @@
       cursor: pointer;
     }
     @media (max-width: 760px) {
-      .game-menu {
-        grid-template-columns: 1fr;
+      body {
+        padding: 10px;
+        align-items: flex-start;
+      }
+      .message-wrap {
+        gap: 8px;
+      }
+      .heading {
+        font-size: clamp(1.35rem, 6.8vw, 2.1rem);
+      }
+      .today-date {
+        font-size: clamp(0.98rem, 3.6vw, 1.2rem);
+        margin-bottom: 8px;
+      }
+      .live-time {
+        font-size: clamp(0.95rem, 4vw, 1.2rem);
+        padding: 8px 12px;
+      }
+      .games-shell {
+        margin-top: 14px;
+        padding: 12px;
+        border-radius: 18px;
+      }
+      .game-view {
+        padding: 10px;
+        min-height: auto;
       }
       .game-panel-header {
         flex-direction: column;
       }
+      .stat-pill {
+        min-width: 0;
+      }
       .mobile-controls {
         display: flex;
+        justify-content: center;
       }
-      .puzzle-grid {
-        width: min(100%, 360px);
+      .control-btn {
+        min-width: 58px;
+        padding: 8px 10px;
+      }
+      .tile-grid {
+        gap: 8px;
+        padding: 8px;
+        width: min(100%, 320px);
+      }
+      .tile-cell {
+        font-size: clamp(0.9rem, 4vw, 1.2rem);
+      }
+      .gate-card {
+        padding: 18px;
+        border-radius: 20px;
+      }
+      .gate-title {
+        font-size: 1.35rem;
+      }
+      .gate-copy {
+        font-size: 0.95rem;
       }
     }
   </style>
@@ -369,7 +416,7 @@
     }
 
     updateClock();
-    setInterval(updateClock, 1);
+    setInterval(updateClock, 1000);
 
     const gameScreen = document.getElementById('game-screen');
     const gameIntro = document.getElementById('game-intro');
@@ -406,8 +453,8 @@
         gateCopy.textContent = 'Choose your setup first so I can enable the right controls.';
         gateHint.textContent = 'Mobile uses touch controls. PC uses keyboard and mouse.';
       } else {
-        gateTitle.textContent = 'Which game do you want to play?';
-        gateCopy.textContent = 'Pick a game and the experience will appear instantly.';
+        gateTitle.textContent = 'Ready to play 2048?';
+        gateCopy.textContent = 'Start the 2048 game for your chosen device and the board will appear instantly.';
         gateHint.textContent = selectedDevice === 'mobile'
           ? 'Touch controls are ready for phones and tablets.'
           : 'Keyboard and mouse controls are ready for desktop play.';
