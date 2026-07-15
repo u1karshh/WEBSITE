@@ -26,13 +26,20 @@
       letter-spacing: 0.04em;
     }
     .announcement {
-      font-size: clamp(1.1rem, 2.4vw, 1.6rem);
+      font-size: clamp(1.05rem, 2.2vw, 1.45rem);
       font-weight: 700;
       margin: 0;
-      line-height: 1.35;
+      line-height: 1.4;
       color: #f5f7f1;
       font-family: Arial, sans-serif;
-      max-width: 760px;
+      max-width: 820px;
+    }
+    .announcement a {
+      color: #7fd1ff;
+      text-decoration: none;
+    }
+    .announcement a:hover {
+      text-decoration: underline;
     }
     .live-time {
       margin-top: 16px;
@@ -75,24 +82,18 @@
 <body>
   <div class="message-wrap">
     <div id="today-date" class="today-date"><strong></strong></div>
-    <div id="announcement" class="announcement" aria-live="polite">Latest 2026 rounds released: JoSAA Round 5, BITSAT Round 4, MHTCET Round 6</div>
+    <div id="announcement" class="announcement" aria-live="polite">
+      Verified 2026 official updates: <a href="https://josaa.nic.in/" target="_blank" rel="noopener noreferrer">JoSAA</a> shows Round 4 seat allocation result; <a href="https://admissions.bits-pilani.ac.in/" target="_blank" rel="noopener noreferrer">BITS admissions</a> is the official portal; <a href="https://cetcell.mahacet.org/" target="_blank" rel="noopener noreferrer">MHT-CET</a> shows CAP registration activity, but no CAP round has started yet.
+    </div>
     <div id="live-time" class="live-time">00:00:00.000</div>
     <div id="google-signin-wrapper" class="google-signin-wrapper"></div>
   </div>
 
   <script>
     const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
-    const roundUpdates = [
-      { josaa: 4, bitsat: 3, mhtcet: 5 },
-      { josaa: 4, bitsat: 4, mhtcet: 6 },
-      { josaa: 5, bitsat: 4, mhtcet: 6 }
-    ];
-    let roundIndex = 0;
 
     function updateAnnouncement() {
-      const current = roundUpdates[roundIndex];
-      document.getElementById('announcement').textContent = `Latest 2026 rounds released: JoSAA Round ${current.josaa}, BITSAT Round ${current.bitsat}, MHTCET Round ${current.mhtcet}`;
-      roundIndex = (roundIndex + 1) % roundUpdates.length;
+      document.getElementById('announcement').innerHTML = 'Verified 2026 official updates: <a href="https://josaa.nic.in/" target="_blank" rel="noopener noreferrer">JoSAA</a> shows Round 4 seat allocation result; <a href="https://admissions.bits-pilani.ac.in/" target="_blank" rel="noopener noreferrer">BITS admissions</a> is the official portal; <a href="https://cetcell.mahacet.org/" target="_blank" rel="noopener noreferrer">MHT-CET</a> shows CAP registration activity, but no CAP round has started yet.';
     }
 
     function updateClock() {
@@ -137,7 +138,6 @@
     updateClock();
     updateAnnouncement();
     setInterval(updateClock, 1);
-    setInterval(updateAnnouncement, 8000);
 
     if (!GOOGLE_CLIENT_ID.includes('YOUR_GOOGLE_CLIENT_ID')) {
       const script = document.createElement('script');
