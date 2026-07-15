@@ -45,12 +45,6 @@
       font-weight: 700;
       box-shadow: 0 6px 20px rgba(0,0,0,0.2);
     }
-    .update-status {
-      margin-top: 10px;
-      font-size: 0.95rem;
-      color: #bfc9ce;
-      font-family: Arial, sans-serif;
-    }
   </style>
 </head>
 <body>
@@ -58,7 +52,6 @@
     <div id="today-date" class="today-date"><strong></strong></div>
     <h1><strong>UTKARSH IS WORKING ON THE WEBSITE</strong></h1>
     <div id="live-time" class="live-time">00:00:00.000</div>
-    <div id="update-status" class="update-status">Last updated from backend: --</div>
   </div>
 
   <script>
@@ -80,15 +73,7 @@
       document.getElementById('live-time').textContent = `${time}.${ms}`;
     }
 
-    function updateBackendStatus() {
-      const status = document.getElementById('update-status');
-      if (status) {
-        status.textContent = `Last updated from backend: ${new Date().toLocaleString()}`;
-      }
-    }
-
     updateClock();
-    updateBackendStatus();
     setInterval(updateClock, 1);
   </script>
 </body>
