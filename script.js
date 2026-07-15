@@ -113,6 +113,15 @@ async function fetchMatchDetails(id) {
   renderStats(stats);
 }
 
+const welcomeOverlay = document.querySelector('#welcome-overlay');
+const enterSiteButton = document.querySelector('#enter-site');
+
+if (welcomeOverlay && enterSiteButton) {
+  enterSiteButton.addEventListener('click', () => {
+    welcomeOverlay.classList.add('hidden');
+  });
+}
+
 document.querySelectorAll('.tabs button').forEach(button => button.addEventListener('click', () => { document.querySelectorAll('.tabs button,.panel').forEach(el => el.classList.remove('selected')); button.classList.add('selected'); document.querySelector(`#${button.dataset.panel}`).classList.add('selected'); }));
 document.querySelector('#prev-event').addEventListener('click', () => { eventIndex = Math.max(0, eventIndex - 1); updateEventCursor(); });
 document.querySelector('#next-event').addEventListener('click', () => { eventIndex = Math.min(currentEvents.length - 1, eventIndex + 1); updateEventCursor(); });

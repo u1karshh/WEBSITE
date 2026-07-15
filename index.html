@@ -33,12 +33,28 @@
     .player-card p { margin: 11px 0 3px; color: var(--acid); font: 9px var(--mono); letter-spacing: .8px; text-transform: uppercase; }
     .player-card h3 { margin: 0; font: 25px/.88 var(--display); letter-spacing: -1.4px; }
     .player-card small { display: block; margin-top: 10px; color: #aeb5b0; font: 9px var(--mono); letter-spacing: .2px; }
+    .welcome-overlay { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(8, 10, 12, .94); backdrop-filter: blur(12px); transition: opacity .3s ease, visibility .3s ease; }
+    .welcome-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .welcome-card { max-width: 560px; width: 100%; border: 1px solid var(--line); background: linear-gradient(135deg, rgba(20, 184, 166, .16), rgba(8, 10, 12, .98)); box-shadow: 0 25px 70px rgba(0, 0, 0, .35); padding: 36px; text-align: center; border-radius: 20px; }
+    .welcome-card .kicker { color: var(--acid); margin-bottom: 8px; }
+    .welcome-card h1 { margin: 12px 0 10px; font: 36px/1.05 var(--display); letter-spacing: -1.4px; text-transform: uppercase; }
+    .welcome-card h1 span { color: var(--acid); }
+    .welcome-card .welcome-copy { color: var(--dim); font: 14px/1.7 var(--font); margin: 0 0 24px; }
+    .welcome-card .watch-button { margin: 0 auto; }
     .flag-en { background: linear-gradient(45deg,transparent 46%,#c9192d 47% 53%,transparent 54%),linear-gradient(-45deg,transparent 46%,#c9192d 47% 53%,transparent 54%),#f1f1ed!important; color:#111; }
     .flag-ar { background: linear-gradient(#75b8df 33%,#fff 33% 66%,#75b8df 66%)!important; color:#222; }
     @media (max-width: 730px) { .section-title { align-items: flex-start; flex-direction: column; } .fixture { grid-template-columns: 1fr 1fr; } .fixture time { grid-column: 1 / -1; } .fixture-timezones { grid-template-columns: repeat(2, max-content); } .players-section { padding: 0 7% 80px; } .player-cards { grid-template-columns: repeat(2, 1fr); margin-top: 35px; } .player-card { min-height: 245px; padding: 15px; } .player-card h3 { font-size: 21px; } }
   </style>
 </head>
 <body>
+  <div id="welcome-overlay" class="welcome-overlay" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+    <div class="welcome-card">
+      <p class="kicker">Welcome</p>
+      <h1 id="welcome-title">Welcome to a creation by <span>Utkarsh</span></h1>
+      <p class="welcome-copy">Step in and explore the match-centre experience.</p>
+      <button id="enter-site" class="watch-button">Continue <span>↗</span></button>
+    </div>
+  </div>
   <div class="noise"></div>
   <header class="topbar">
     <a href="#overview" class="wordmark" aria-label="World Cup 26 match centre">FIFA <b>WORLD CUP 26</b><i>™</i></a>
