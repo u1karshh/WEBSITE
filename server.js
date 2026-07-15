@@ -27,8 +27,9 @@ function saveSubscribers(subscribers) {
 }
 
 function getTransporter() {
-  const host = process.env.SMTP_HOST;
-  const port = Number(process.env.SMTP_PORT || 587);
+  const service = process.env.SMTP_SERVICE || '';
+  const host = process.env.SMTP_HOST || (service.toLowerCase() === 'gmail' ? 'smtp.gmail.com' : '');
+  const port = Number(process.env.SMTP_PORT || (service.toLowerCase() === 'gmail' ? 587 : 587));
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
 
@@ -39,8 +40,9 @@ function getTransporter() {
   return nodemailer.createTransport({
     host,
     port,
-    secure: false,
-    auth: { user, pass }
+    secure: port === 465,
+    auth: { user, pass },
+    service: service || undefined
   });
 }
 
@@ -109,6 +111,10 @@ cron.schedule('0 8 * * *', () => {
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/health', (req, res) => {
+  res.json({ ok: true, message: 'Service is running.' });
 });
 
 app.listen(PORT, () => {
