@@ -61,6 +61,12 @@
     .google-signin:hover {
       transform: translateY(-2px);
     }
+    .google-signin-wrapper {
+      margin-top: 20px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+    }
   </style>
 </head>
 <body>
@@ -68,10 +74,12 @@
     <div id="today-date" class="today-date"><strong></strong></div>
     <h1><strong>UTKARSH IS WORKING ON THE WEBSITE</strong></h1>
     <div id="live-time" class="live-time">00:00:00.000</div>
-    <a class="google-signin" href="https://accounts.google.com/signin" target="_blank" rel="noopener noreferrer">Sign in with Google</a>
+    <div id="google-signin-wrapper" class="google-signin-wrapper"></div>
   </div>
 
   <script>
+    const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+
     function updateClock() {
       const now = new Date();
       document.getElementById('today-date').innerHTML = '<strong>15 Jul 2026</strong>';
@@ -85,8 +93,45 @@
       document.getElementById('live-time').textContent = `${time}.${ms}`;
     }
 
+    function initGoogleSignIn() {
+      const container = document.getElementById('google-signin-wrapper');
+      if (!container) return;
+
+      if (GOOGLE_CLIENT_ID.includes('YOUR_GOOGLE_CLIENT_ID')) {
+        container.innerHTML = '<a class="google-signin" href="https://accounts.google.com/signin" target="_blank" rel="noopener noreferrer">Sign in with Google</a>';
+        return;
+      }
+
+      if (window.google && window.google.accounts && window.google.accounts.id) {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: (response) => {
+            console.log('Google sign-in response:', response);
+          }
+        });
+
+        window.google.accounts.id.renderButton(container, {
+          theme: 'outline',
+          size: 'large',
+          text: 'signin_with',
+          shape: 'pill'
+        });
+      }
+    }
+
     updateClock();
     setInterval(updateClock, 1);
+
+    if (!GOOGLE_CLIENT_ID.includes('YOUR_GOOGLE_CLIENT_ID')) {
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.onload = initGoogleSignIn;
+      document.head.appendChild(script);
+    } else {
+      initGoogleSignIn();
+    }
   </script>
 </body>
 </html>
