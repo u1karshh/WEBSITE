@@ -3,106 +3,28 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="World Cup 26 match centre — semi-finals and final.">
-  <title>World Cup 26 | Match Centre</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <title>Website Update</title>
   <style>
-    :root { --acid: #ff6b3d; --accent-soft: #ffd166; }
-    .hero-panel:after { color: rgba(255, 107, 61, .06); }
-    .bracket-section { background: linear-gradient(135deg, var(--acid), #ff8b4a); }
-    .section-title { align-items: end; gap: 24px; }
-    .timezone-note { margin: 0; color: var(--dim); font: 9px var(--mono); letter-spacing: .6px; text-transform: uppercase; }
-    .fixture time { min-width: 172px; line-height: 1.55; }
-    .fixture-timezones { display: grid; grid-template-columns: repeat(3, max-content); gap: 3px 12px; }
-    .fixture-timezones span { white-space: nowrap; }
-    .fixture-timezones b { color: var(--acid); font-weight: 500; }
-    .fixture { grid-template-columns: minmax(255px, 1.25fr) 1fr 1fr 90px; }
-    .fixture time { min-width: 0; }
-    .creator-credit { color: var(--acid); font: 10px var(--mono); letter-spacing: .5px; white-space: nowrap; }
-    .creator-credit b { font-size: 12px; }
-    .players-section { padding: 0 7% 118px; }
-    .player-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin-top: 57px; background: var(--line); }
-    .player-card { min-height: 320px; position: relative; overflow: hidden; background: #151a1f; display: flex; align-items: end; padding: 20px; isolation: isolate; }
-    .player-card:after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(0deg, #101419 4%, rgba(16,20,25,.72) 42%, rgba(16,20,25,.02) 72%); }
-    .player-card img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: contain; object-position: center; background: #151a1f; filter: saturate(.85) contrast(1.08); transition: transform .4s ease; }
-    .player-card:hover img { transform: scale(1.045); }
-    .player-card .mini-flag { width: 26px; height: 26px; font-size: 7px; }
-    .player-card p { margin: 11px 0 3px; color: var(--acid); font: 9px var(--mono); letter-spacing: .8px; text-transform: uppercase; }
-    .player-card h3 { margin: 0; font: 25px/.88 var(--display); letter-spacing: -1.4px; }
-    .player-card small { display: block; margin-top: 10px; color: #aeb5b0; font: 9px var(--mono); letter-spacing: .2px; }
-    .welcome-overlay { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(8, 10, 12, .94); backdrop-filter: blur(12px); transition: opacity .3s ease, visibility .3s ease; }
-    .welcome-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-    .welcome-card { max-width: 560px; width: 100%; border: 1px solid var(--line); background: linear-gradient(135deg, rgba(255, 107, 61, .16), rgba(8, 10, 12, .98)); box-shadow: 0 25px 70px rgba(0, 0, 0, .35); padding: 36px; text-align: center; border-radius: 20px; }
-    .welcome-card .kicker { color: var(--accent-soft); margin-bottom: 8px; }
-    .welcome-card h1 { margin: 12px 0 10px; font: 36px/1.05 var(--display); letter-spacing: -1.4px; text-transform: uppercase; }
-    .welcome-card h1 span { color: var(--accent-soft); }
-    .welcome-card .welcome-copy { color: var(--dim); font: 14px/1.7 var(--font); margin: 0 0 24px; }
-    .welcome-card .welcome-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-    .welcome-card .choice-button { border: 1px solid var(--line); background: rgba(255,255,255,.04); color: var(--ink); padding: 12px 18px; border-radius: 999px; font: 12px var(--mono); letter-spacing: .7px; text-transform: uppercase; cursor: pointer; transition: transform .2s ease, border-color .2s ease, background .2s ease; }
-    .welcome-card .choice-button:hover { transform: translateY(-1px); border-color: var(--acid); background: rgba(255, 107, 61, .16); }
-    .flag-en { background: linear-gradient(45deg,transparent 46%,#c9192d 47% 53%,transparent 54%),linear-gradient(-45deg,transparent 46%,#c9192d 47% 53%,transparent 54%),#f1f1ed!important; color:#111; }
-    .flag-ar { background: linear-gradient(#75b8df 33%,#fff 33% 66%,#75b8df 66%)!important; color:#222; }
-    @media (max-width: 730px) { .section-title { align-items: flex-start; flex-direction: column; } .fixture { grid-template-columns: 1fr 1fr; } .fixture time { grid-column: 1 / -1; } .fixture-timezones { grid-template-columns: repeat(2, max-content); } .players-section { padding: 0 7% 80px; } .player-cards { grid-template-columns: repeat(2, 1fr); margin-top: 35px; } .player-card { min-height: 245px; padding: 15px; } .player-card h3 { font-size: 21px; } }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #050608;
+      color: #f5f7f1;
+      font-family: Arial, sans-serif;
+      padding: 24px;
+    }
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900;
+      margin: 0;
+      text-align: center;
+      line-height: 1.2;
+    }
   </style>
 </head>
 <body>
-  <div id="welcome-overlay" class="welcome-overlay" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
-    <div class="welcome-card">
-      <p class="kicker">Welcome</p>
-      <h1 id="welcome-title">Welcome to a creation by <span>Utkarsh</span></h1>
-      <p class="welcome-copy">Choose the match experience you want to explore first.</p>
-      <div class="welcome-actions">
-        <button id="choose-football" class="choice-button">Football</button>
-        <button id="choose-cricket" class="choice-button">Cricket</button>
-      </div>
-    </div>
-  </div>
-  <div class="noise"></div>
-  <header class="topbar">
-    <a href="#overview" class="wordmark" aria-label="World Cup 26 match centre">FIFA <b>WORLD CUP 26</b><i>™</i></a>
-    <nav><a class="active" href="#overview">Match Centre</a><a href="#bracket">Knockout</a><a href="#final">Final</a><a href="cricket.html">Cricket</a></nav>
-    <div class="live-chip"><span></span><strong id="connection-status">LIVE DATA</strong><small id="updated-time">Updating</small></div>
-  </header>
-
-  <main id="overview">
-    <section class="hero-panel">
-      <div class="tournament-label"><span>FIFA World Cup 26™</span><span>North America · 11 June — 19 July</span></div>
-      <div class="hero-heading"><p>Knockout stage</p><h1>THE LAST<br><em>FOUR.</em></h1><span class="edition">2026</span></div>
-      <div class="next-match" id="primary-card">
-        <div class="match-meta"><span id="primary-status">SEMI-FINAL 01</span><span id="primary-detail">Dallas Stadium</span></div>
-        <div class="clubs"><div class="club"><b class="flag flag-fr">FR</b><strong id="home-name">France</strong></div><div class="score-block"><b id="home-score">—</b><small id="match-time">14 JUL · 20:00</small><b id="away-score">—</b></div><div class="club"><b class="flag flag-es">ES</b><strong id="away-name">Spain</strong></div></div>
-        <div class="match-actions"><button class="watch-button" id="watch-match">Open match centre <span>↗</span></button><button class="bell-button" id="remind-button" aria-label="Set a match reminder">♧ <span>Set reminder</span></button></div>
-      </div>
-    </section>
-
-    <section class="command-deck" id="match-centre">
-      <div class="deck-header"><div><p class="kicker">Match centre</p><h2>France <span>v</span> Spain</h2></div><div class="timeline-control"><button id="prev-event" aria-label="Previous event">←</button><div><b id="event-minute">PRE-MATCH</b><small>Event timeline</small></div><button id="next-event" aria-label="Next event">→</button></div></div>
-      <div class="tabs" role="tablist"><button class="selected" data-panel="timeline">Timeline</button><button data-panel="lineups">Line-ups</button><button data-panel="stats">Match stats</button><button data-panel="insight">Match insight</button></div>
-      <div class="panel selected" id="timeline"><div class="timeline" id="timeline-list"></div></div>
-      <div class="panel" id="lineups"><div class="lineup-grid"><div><h3><span class="flag flag-fr">FR</span> France</h3><div class="pitch-list" id="home-lineup"></div></div><div><h3><span class="flag flag-es">ES</span> Spain</h3><div class="pitch-list" id="away-lineup"></div></div></div><p class="data-note">Line-ups and substitutions appear here when supplied by the live match feed.</p></div>
-      <div class="panel" id="stats"><div class="stat-board" id="stat-board"></div></div>
-      <div class="panel" id="insight"><div class="insight-layout"><p class="big-quote">“One match. One way through.”</p><div><p class="kicker">The route to the final</p><p>Use the timeline to track every turning point — goals, cards, VAR reviews and substitutions — as official match information becomes available.</p><button class="watch-button" id="share-button">Share match centre <span>↗</span></button></div></div></div>
-    </section>
-
-    <section class="semi-section"><div class="section-title"><div><p class="kicker">Semi-final schedule</p><h2>Two matches. <em>One final.</em></h2></div><p class="timezone-note">Kick-off times shown worldwide</p></div><div class="fixture-list" id="fixture-list"></div></section>
-
-    <section class="players-section" aria-labelledby="players-title">
-      <div class="section-title"><div><p class="kicker">Players to watch</p><h2 id="players-title">Stars on the <em>stage.</em></h2></div><p class="timezone-note">The names set to shape the semi-finals</p></div>
-      <div class="player-cards">
-        <article class="player-card"><img src="https://img.a.transfermarkt.technology/portrait/big/342229-1682683695.jpg" alt="Kylian Mbappé of France" loading="lazy"><div><span class="flag mini-flag flag-fr">FR</span><p>France</p><h3>Kylian<br>Mbappé</h3><small>Forward · Semi-final 01</small></div></article>
-        <article class="player-card"><img src="https://img.a.transfermarkt.technology/portrait/big/937958-1773173768.jpg" alt="Lamine Yamal of Spain" loading="lazy"><div><span class="flag mini-flag flag-es">ES</span><p>Spain</p><h3>Lamine<br>Yamal</h3><small>Forward · Semi-final 01</small></div></article>
-        <article class="player-card"><img src="https://img.a.transfermarkt.technology/portrait/big/581678-1748102891.jpg" alt="Jude Bellingham of England" loading="lazy"><div><span class="flag mini-flag flag-en">EN</span><p>England</p><h3>Jude<br>Bellingham</h3><small>Midfielder · Semi-final 02</small></div></article>
-        <article class="player-card"><img src="https://img.a.transfermarkt.technology/portrait/big/28003-1740766555.jpg" alt="Lionel Messi of Argentina" loading="lazy"><div><span class="flag mini-flag flag-ar">AR</span><p>Argentina</p><h3>Lionel<br>Messi</h3><small>Forward · Semi-final 02</small></div></article>
-      </div>
-    </section>
-
-    <section class="bracket-section" id="bracket"><p class="kicker">The path</p><div class="bracket-heading"><h2>Knockout <em>bracket</em></h2><span>Results update automatically</span></div><div class="bracket"><div class="round"><small>SEMI-FINAL 01</small><article><b>France</b><span>—</span><b>Spain</b><span>—</span></article><small>SEMI-FINAL 02</small><article><b>England</b><span>—</span><b>Argentina</b><span>—</span></article></div><div class="connector"><i></i><i></i></div><div class="round final-round" id="final"><small>FINAL · 19 JULY</small><article><b id="final-home">Winner SF 01</b><span>—</span><b id="final-away">Winner SF 02</b><span>—</span></article><strong>NEW YORK NEW JERSEY<br>STADIUM</strong></div></div></section>
-  </main>
-  <footer><span>FIFA WORLD CUP 26™</span><p>This independent demo uses public live-score data when available. Confirm match information through official FIFA channels.</p><button id="refresh-button">↻ Refresh data</button></footer>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="script.js"></script>
+  <h1><strong>UTKARSH IS WORKING ON THE WEBSITE</strong></h1>
 </body>
 </html>
