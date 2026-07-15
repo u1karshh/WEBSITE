@@ -18,6 +18,13 @@
     .message-wrap {
       text-align: center;
     }
+    .today-date {
+      margin-bottom: 12px;
+      font-size: clamp(1.2rem, 2.8vw, 1.7rem);
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.04em;
+    }
     h1 {
       font-size: clamp(2rem, 5vw, 3.5rem);
       font-weight: 900;
@@ -48,6 +55,7 @@
 </head>
 <body>
   <div class="message-wrap">
+    <div id="today-date" class="today-date"><strong></strong></div>
     <h1><strong>UTKARSH IS WORKING ON THE WEBSITE</strong></h1>
     <div id="live-time" class="live-time">00:00:00.000</div>
     <div id="update-status" class="update-status">Last updated from backend: --</div>
@@ -56,6 +64,12 @@
   <script>
     function updateClock() {
       const now = new Date();
+      const date = now.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      });
+      document.getElementById('today-date').innerHTML = `<strong>${date}</strong>`;
       const time = now.toLocaleTimeString('en-GB', {
         hour12: false,
         hour: '2-digit',
