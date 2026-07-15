@@ -22,6 +22,15 @@
       align-items: center;
       gap: 12px;
     }
+    .heading {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900;
+      margin: 0;
+      line-height: 1.2;
+      color: #f5f7f1;
+      font-family: Arial, sans-serif;
+      text-transform: uppercase;
+    }
     .today-date {
       margin-bottom: 12px;
       font-size: clamp(1.2rem, 2.8vw, 1.7rem);
@@ -69,6 +78,7 @@
 </head>
 <body>
   <div class="message-wrap">
+    <h1 class="heading">UTKARSH IS WORKING ON THE WEBSITE</h1>
     <div id="today-date" class="today-date"><strong></strong></div>
     <div id="announcement" class="announcement" aria-live="polite"></div>
     <div id="live-time" class="live-time">00:00:00.000</div>
