@@ -65,6 +65,35 @@
       font-weight: 700;
       box-shadow: 0 6px 20px rgba(0,0,0,0.2);
     }
+    .subscription-box {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+    .subscription-box input {
+      min-width: 280px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      outline: none;
+    }
+    .subscription-box button {
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: none;
+      background: #7fd1ff;
+      color: #05131c;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .subscription-box .status {
+      font-size: 0.95rem;
+      color: #bcdfe9;
+    }
   </style>
 </head>
 <body>
@@ -72,6 +101,11 @@
     <div id="today-date" class="today-date"><strong></strong></div>
     <div id="announcement" class="announcement" aria-live="polite"></div>
     <div id="live-time" class="live-time">00:00:00.000</div>
+    <div class="subscription-box">
+      <input id="email-input" type="email" placeholder="Enter your email" />
+      <button id="subscribe-button" type="button">Get updates</button>
+      <div id="subscription-status" class="status"></div>
+    </div>
   </div>
 
   <script>
@@ -122,31 +156,36 @@
       document.getElementById('live-time').textContent = `${time}.${ms}`;
     }
 
-    function initGoogleSignIn() {
-      const container = document.getElementById('google-signin-wrapper');
-      if (!container) return;
+    async function handleSubscribe() {
+      const input = document.getElementById('email-input');
+      const status = document.getElementById('subscription-status');
+      if (!input || !status) return;
 
-      if (GOOGLE_CLIENT_ID.includes('YOUR_GOOGLE_CLIENT_ID')) {
-        container.innerHTML = '<a class="google-signin" href="https://accounts.google.com/signin" target="_blank" rel="noopener noreferrer">Sign in with Google</a>';
+      const email = input.value.trim();
+      if (!email) {
+        status.textContent = 'Please enter an email address.';
         return;
       }
 
-      if (window.google && window.google.accounts && window.google.accounts.id) {
-        window.google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
-          callback: (response) => {
-            console.log('Google sign-in response:', response);
-          }
+      status.textContent = 'Subscribing...';
+      try {
+        const response = await fetch('/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
         });
-
-        window.google.accounts.id.renderButton(container, {
-          theme: 'outline',
-          size: 'large',
-          text: 'signin_with',
-          shape: 'pill'
-        });
+        const data = await response.json();
+        status.textContent = data.message || 'Subscription saved.';
+        if (data.ok) input.value = '';
+      } catch (error) {
+        status.textContent = 'Subscription failed. Please try again.';
       }
     }
+
+    document.getElementById('subscribe-button').addEventListener('click', handleSubscribe);
+    document.getElementById('email-input').addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') handleSubscribe();
+    });
 
     updateClock();
     updateAnnouncement();
