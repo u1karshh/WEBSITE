@@ -35,32 +35,14 @@
     .player-card small { display: block; margin-top: 10px; color: #aeb5b0; font: 9px var(--mono); letter-spacing: .2px; }
     .flag-en { background: linear-gradient(45deg,transparent 46%,#c9192d 47% 53%,transparent 54%),linear-gradient(-45deg,transparent 46%,#c9192d 47% 53%,transparent 54%),#f1f1ed!important; color:#111; }
     .flag-ar { background: linear-gradient(#75b8df 33%,#fff 33% 66%,#75b8df 66%)!important; color:#222; }
-    .account-trigger { border: 1px solid var(--line); background: transparent; color: var(--ink); padding: 9px 13px; font: 10px var(--mono); letter-spacing: .4px; cursor: pointer; white-space: nowrap; }
-    .account-trigger:hover, .account-trigger.signed-in { border-color: var(--acid); color: var(--acid); }
-    .fan-zone { display: grid; grid-template-columns: 1fr minmax(330px, 470px); gap: 11%; align-items: center; padding: 96px 7%; background: #10161b; border-top: 1px solid var(--line); }
-    .fan-zone h2 { margin: 0; font: clamp(2.8rem, 5vw, 5.7rem)/.9 var(--display); letter-spacing: -.07em; } .fan-zone h2 em, .account-modal h2 em { color: var(--acid); font-style: normal; }
-    .fan-copy { max-width: 430px; color: #aeb5b0; font-size: 13px; line-height: 1.65; }
-    .prediction-card { padding: 25px; background: #080a0c; border: 1px solid var(--line); }
-    .prediction-label, .prediction-login-note, .prediction-status { font: 10px var(--mono); letter-spacing: .45px; } .prediction-label { color: var(--acid); text-transform: uppercase; } .prediction-login-note { color: var(--dim); margin: 24px 0 5px; }
-    .score-picker { display: grid; grid-template-columns: 1fr 24px 1fr; gap: 10px; align-items: end; margin: 21px 0; } .score-picker b { padding-bottom: 13px; text-align: center; color: var(--acid); }
-    .prediction-card label { display: grid; gap: 8px; color: var(--dim); font: 9px var(--mono); letter-spacing: .5px; text-transform: uppercase; }
-    .prediction-card select { width: 100%; padding: 11px; background: #151a1f; color: var(--ink); border: 1px solid var(--line); font: 15px var(--mono); } .star-select { margin-bottom: 19px; }
-    .save-prediction, .account-modal form button { width: 100%; border: 0; padding: 14px; background: var(--acid); color: #10130e; font: 10px var(--mono); letter-spacing: .5px; text-transform: uppercase; cursor: pointer; } .save-prediction span { margin-left: 10px; font-size: 16px; }
-    .prediction-status { min-height: 13px; margin: 13px 0 0; color: var(--acid); }
-    .account-modal { width: min(440px, calc(100% - 32px)); color: var(--ink); background: #101419; border: 1px solid var(--line); padding: 33px; } .account-modal::backdrop { background: rgba(0,0,0,.72); backdrop-filter: blur(5px); }
-    .account-modal h2 { margin: 0; font: 38px/.88 var(--display); letter-spacing: -2px; }.account-modal>p:not(.kicker) { color: var(--dim); font-size: 12px; line-height: 1.5; }
-    .account-modal form { display: grid; gap: 15px; margin-top: 25px; }.account-modal label { display: grid; gap: 7px; color: var(--dim); font: 9px var(--mono); text-transform: uppercase; letter-spacing: .6px; }.account-modal input { border: 1px solid var(--line); background: #080a0c; color: var(--ink); padding: 12px; font: 13px var(--font); }.account-modal input:focus { border-color: var(--acid); outline: none; }.account-modal form p { min-height: 12px; margin: -4px 0 0; color: var(--red); font: 10px var(--mono); }.account-mode { display: block; margin: 15px auto 0; border: 0; background: transparent; color: var(--dim); font: 10px var(--mono); cursor: pointer; }.account-mode:hover { color: var(--acid); }.account-close { position: absolute; top: 10px; right: 13px; border: 0; background: transparent; color: var(--ink); font-size: 25px; cursor: pointer; }
-    @media (max-width: 730px) { .section-title { align-items: flex-start; flex-direction: column; } .fixture { grid-template-columns: 1fr 1fr; } .fixture time { grid-column: 1 / -1; } .fixture-timezones { grid-template-columns: repeat(2, max-content); } .players-section { padding: 0 7% 80px; } .player-cards { grid-template-columns: repeat(2, 1fr); margin-top: 35px; } .player-card { min-height: 245px; padding: 15px; } .player-card h3 { font-size: 21px; } .account-trigger { margin-left: auto; } .fan-zone { grid-template-columns: 1fr; gap: 32px; padding: 70px 7%; } }
-    .admin-panel { display:grid; grid-template-columns:.8fr 1.2fr; gap:10%; padding:90px 7%; background:#0b0e11; border-top:1px solid var(--line); }.admin-panel h2{margin:0;font:clamp(2.8rem,5vw,5.4rem)/.9 var(--display);letter-spacing:-.07em}.admin-panel h2 em{color:var(--acid);font-style:normal}.admin-panel>div>p:not(.kicker){max-width:350px;color:var(--dim);font-size:13px;line-height:1.6}.admin-form{display:grid;gap:14px;padding:25px;background:var(--panel);border:1px solid var(--line)}.admin-form label{display:grid;gap:7px;color:var(--dim);font:9px var(--mono);letter-spacing:.5px;text-transform:uppercase}.admin-form input,.admin-form select{min-width:0;width:100%;padding:11px;border:1px solid var(--line);background:#080a0c;color:var(--ink);font:12px var(--font)}.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.admin-subhead{margin:5px 0 -2px;color:var(--acid);font:9px var(--mono);letter-spacing:.6px;text-transform:uppercase}.admin-actions{display:grid;grid-template-columns:1fr auto;gap:8px}.admin-actions button{border:0;background:var(--acid);color:#10130e;padding:12px;font:10px var(--mono);cursor:pointer;text-transform:uppercase}.admin-actions #admin-delete{background:transparent;color:var(--red);border:1px solid #66312c}.admin-form>p:last-child{min-height:12px;margin:0;color:var(--acid);font:10px var(--mono)}
-    @media (max-width:730px){.admin-panel{grid-template-columns:1fr;gap:32px;padding:70px 7%}.admin-grid{grid-template-columns:1fr}}
+    @media (max-width: 730px) { .section-title { align-items: flex-start; flex-direction: column; } .fixture { grid-template-columns: 1fr 1fr; } .fixture time { grid-column: 1 / -1; } .fixture-timezones { grid-template-columns: repeat(2, max-content); } .players-section { padding: 0 7% 80px; } .player-cards { grid-template-columns: repeat(2, 1fr); margin-top: 35px; } .player-card { min-height: 245px; padding: 15px; } .player-card h3 { font-size: 21px; } }
   </style>
 </head>
 <body>
   <div class="noise"></div>
   <header class="topbar">
     <a href="#overview" class="wordmark" aria-label="World Cup 26 match centre">FIFA <b>WORLD CUP 26</b><i>™</i></a>
-    <nav><a class="active" href="#overview">Match Centre</a><a href="#bracket">Knockout</a><a href="#fan-zone">Fan zone</a><a href="#final">Final</a></nav>
-    <button class="account-trigger" id="account-trigger" type="button">Sign in</button>
+    <nav><a class="active" href="#overview">Match Centre</a><a href="#bracket">Knockout</a><a href="#final">Final</a></nav>
     <div class="live-chip"><span></span><strong id="connection-status">LIVE DATA</strong><small id="updated-time">Updating</small></div>
   </header>
 
@@ -96,43 +78,10 @@
       </div>
     </section>
 
-    <section class="fan-zone" id="fan-zone" aria-labelledby="fan-zone-title">
-      <div><p class="kicker">Fan zone</p><h2 id="fan-zone-title">Make your <em>call.</em></h2><p class="fan-copy">Pick a score, back the player you think will own the night, and return to your saved prediction before kick-off.</p></div>
-      <div class="prediction-card">
-        <p class="prediction-label">Semi-final 01 · Dallas</p>
-        <p class="prediction-login-note" id="prediction-login-note">Sign in to save your prediction on this device.</p>
-        <form id="prediction-form" hidden>
-          <div class="score-picker"><label>France<select id="home-prediction" required><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label><b>—</b><label>Spain<select id="away-prediction" required><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label></div>
-          <label class="star-select">Player to watch<select id="star-prediction"><option>Kylian Mbappé</option><option>Lamine Yamal</option><option>Jude Bellingham</option><option>Lionel Messi</option></select></label>
-          <button class="save-prediction" type="submit">Save prediction <span>→</span></button>
-        </form>
-        <p id="prediction-status" class="prediction-status" aria-live="polite"></p>
-      </div>
-    </section>
-
     <section class="bracket-section" id="bracket"><p class="kicker">The path</p><div class="bracket-heading"><h2>Knockout <em>bracket</em></h2><span>Results update automatically</span></div><div class="bracket"><div class="round"><small>SEMI-FINAL 01</small><article><b>France</b><span>—</span><b>Spain</b><span>—</span></article><small>SEMI-FINAL 02</small><article><b>England</b><span>—</span><b>Argentina</b><span>—</span></article></div><div class="connector"><i></i><i></i></div><div class="round final-round" id="final"><small>FINAL · 19 JULY</small><article><b id="final-home">Winner SF 01</b><span>—</span><b id="final-away">Winner SF 02</b><span>—</span></article><strong>NEW YORK NEW JERSEY<br>STADIUM</strong></div></div></section>
-    <section class="admin-panel" id="admin-panel" hidden aria-labelledby="admin-title">
-      <div><p class="kicker">Administrator</p><h2 id="admin-title">Account <em>control.</em></h2><p>Manage locally stored accounts, reset passwords, and edit each member’s saved match call.</p></div>
-      <form id="admin-form" class="admin-form">
-        <label>Choose account<select id="admin-account-select"></select></label><input id="admin-original-email" type="hidden">
-        <div class="admin-grid"><label>Name<input id="admin-name" required></label><label>Email<input id="admin-email" type="email" required></label></div>
-        <div class="admin-grid"><label>Role<select id="admin-role"><option value="member">Member</option><option value="admin">Admin</option></select></label><label>Reset password<input id="admin-password" type="password" placeholder="Leave blank to keep current"></label></div>
-        <p class="admin-subhead">Saved prediction</p>
-        <div class="admin-grid"><label>France<select id="admin-home"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label><label>Spain<select id="admin-away"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label></div>
-        <label>Player to watch<select id="admin-star"><option>Kylian Mbappé</option><option>Lamine Yamal</option><option>Jude Bellingham</option><option>Lionel Messi</option></select></label>
-        <div class="admin-actions"><button type="submit">Save account</button><button id="admin-delete" type="button">Delete account</button></div><p id="admin-status" aria-live="polite"></p>
-      </form>
-    </section>
   </main>
   <footer><span>FIFA WORLD CUP 26™</span><p>This independent demo uses public live-score data when available. Confirm match information through official FIFA channels.</p><button id="refresh-button">↻ Refresh data</button></footer>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <dialog class="account-modal" id="account-modal">
-    <button id="account-close" class="account-close" type="button" aria-label="Close account dialog">×</button>
-    <p class="kicker">Match centre account</p><h2>Save your<br><em>match calls.</em></h2><p>Your profile and predictions stay on this device.</p>
-    <form id="account-form"><label id="account-name-field">Name<input name="name" autocomplete="name"></label><label>Email<input name="email" type="email" autocomplete="email" required></label><label>Password<input name="password" type="password" autocomplete="current-password" minlength="8" required></label><p id="account-message" role="alert"></p><button id="account-submit" type="submit">Sign in</button></form>
-    <button id="account-mode" class="account-mode" type="button">New here? Create an account</button>
-  </dialog>
-  <script src="auth.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
