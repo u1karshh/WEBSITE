@@ -40,7 +40,10 @@
     .welcome-card h1 { margin: 12px 0 10px; font: 36px/1.05 var(--display); letter-spacing: -1.4px; text-transform: uppercase; }
     .welcome-card h1 span { color: var(--acid); }
     .welcome-card .welcome-copy { color: var(--dim); font: 14px/1.7 var(--font); margin: 0 0 24px; }
-    .welcome-card .watch-button { margin: 0 auto; }
+    .welcome-card .welcome-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .welcome-card .choice-button { border: 1px solid var(--line); background: rgba(255,255,255,.04); color: var(--ink); padding: 12px 18px; border-radius: 999px; font: 12px var(--mono); letter-spacing: .7px; text-transform: uppercase; cursor: pointer; transition: transform .2s ease, border-color .2s ease, background .2s ease; }
+    .welcome-card .choice-button:hover { transform: translateY(-1px); border-color: var(--acid); background: rgba(20, 184, 166, .16); }
+    .welcome-card .choice-button.primary { background: var(--acid); color: #04110f; font-weight: 700; }
     .flag-en { background: linear-gradient(45deg,transparent 46%,#c9192d 47% 53%,transparent 54%),linear-gradient(-45deg,transparent 46%,#c9192d 47% 53%,transparent 54%),#f1f1ed!important; color:#111; }
     .flag-ar { background: linear-gradient(#75b8df 33%,#fff 33% 66%,#75b8df 66%)!important; color:#222; }
     @media (max-width: 730px) { .section-title { align-items: flex-start; flex-direction: column; } .fixture { grid-template-columns: 1fr 1fr; } .fixture time { grid-column: 1 / -1; } .fixture-timezones { grid-template-columns: repeat(2, max-content); } .players-section { padding: 0 7% 80px; } .player-cards { grid-template-columns: repeat(2, 1fr); margin-top: 35px; } .player-card { min-height: 245px; padding: 15px; } .player-card h3 { font-size: 21px; } }
@@ -51,8 +54,11 @@
     <div class="welcome-card">
       <p class="kicker">Welcome</p>
       <h1 id="welcome-title">Welcome to a creation by <span>Utkarsh</span></h1>
-      <p class="welcome-copy">Step in and explore the match-centre experience.</p>
-      <button id="enter-site" class="watch-button">Continue <span>↗</span></button>
+      <p class="welcome-copy">Choose the match experience you want to explore first.</p>
+      <div class="welcome-actions">
+        <button id="choose-football" class="choice-button primary">Football</button>
+        <button id="choose-cricket" class="choice-button">Cricket</button>
+      </div>
     </div>
   </div>
   <div class="noise"></div>

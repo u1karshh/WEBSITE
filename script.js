@@ -114,11 +114,18 @@ async function fetchMatchDetails(id) {
 }
 
 const welcomeOverlay = document.querySelector('#welcome-overlay');
-const enterSiteButton = document.querySelector('#enter-site');
+const footballButton = document.querySelector('#choose-football');
+const cricketButton = document.querySelector('#choose-cricket');
 
-if (welcomeOverlay && enterSiteButton) {
-  enterSiteButton.addEventListener('click', () => {
+if (welcomeOverlay && footballButton) {
+  footballButton.addEventListener('click', () => {
     welcomeOverlay.classList.add('hidden');
+  });
+}
+
+if (cricketButton) {
+  cricketButton.addEventListener('click', () => {
+    window.location.href = 'cricket.html';
   });
 }
 
