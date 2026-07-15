@@ -30,10 +30,10 @@ document.head.insertAdjacentHTML('beforeend', `<style>
     display: none !important;
   }
   :root { --border-radius: 8px; }
-  button, .button, input, select, textarea, dialog, .fixture, .event, .panel, .tabs button, #toast, #admin-panel, .stat .bar, .form-field {
+  button, .button, input, select, textarea, dialog, .fixture, .event, .panel, .tabs button, #toast, .stat .bar, .next-match, .command-deck, .player-card, .player-cards, .round article {
     border-radius: var(--border-radius);
   }
-  .fixture, .event, .panel, #admin-panel, .stat .bar, dialog {
+  .fixture, .event, .panel, .stat .bar, dialog, .next-match, .command-deck, .player-card, .player-cards {
     overflow: hidden; /* Prevents content from spilling out of rounded corners */
   }
 </style>`);
