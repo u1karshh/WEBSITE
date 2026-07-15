@@ -56,7 +56,7 @@
     }
     .games-shell {
       margin-top: 28px;
-      width: min(980px, 100%);
+      width: min(1100px, 100%);
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.12);
       border-radius: 24px;
@@ -109,7 +109,7 @@
       border: 1px solid rgba(255,255,255,0.12);
       background: rgba(3,8,15,0.92);
       padding: 16px;
-      min-height: 380px;
+      min-height: 480px;
     }
     .game-intro {
       text-align: center;
@@ -119,47 +119,124 @@
       padding: 8px 0 12px;
     }
     .game-screen {
+      display: block;
+    }
+    .game-panel {
       display: flex;
-      justify-content: center;
-      align-items: center;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .game-panel-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .stat-pill {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      min-width: 220px;
+    }
+    .stat-pill strong {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #6fe4ff;
+    }
+    .stat-pill span {
+      font-size: 0.84rem;
+      color: #cfe6ee;
+      line-height: 1.45;
+    }
+    .hud-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px;
+    }
+    .metric {
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+    }
+    .metric .label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #8bd9f1;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .metric .value {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+    .meter-track {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.1);
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .meter-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #7fd1ff, #8dffbf);
+      width: 0%;
+      transition: width 0.2s ease;
+    }
+    .message-line {
+      font-size: 0.95rem;
+      color: #cfe4ea;
+      padding: 6px 0 2px;
     }
     .game-shell canvas {
       width: 100%;
-      max-width: 560px;
+      max-width: 720px;
       border-radius: 18px;
       border: 1px solid rgba(255,255,255,0.16);
       box-shadow: 0 12px 30px rgba(0,0,0,0.35);
       background: linear-gradient(180deg, #07111d, #0c1725);
     }
-    .game-shell .puzzle-grid {
+    .puzzle-grid {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(6, 1fr);
       gap: 8px;
-      width: min(360px, 100%);
+      width: min(480px, 100%);
+      margin: 0 auto;
     }
-    .game-shell .puzzle-tile {
+    .puzzle-tile {
       aspect-ratio: 1;
-      border: none;
-      border-radius: 14px;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
       cursor: pointer;
+      position: relative;
+      overflow: hidden;
       transition: transform 0.16s ease, box-shadow 0.16s ease;
     }
-    .game-shell .puzzle-tile:hover {
+    .puzzle-tile:hover {
       transform: scale(1.03);
       box-shadow: 0 8px 18px rgba(0,0,0,0.22);
     }
-    .game-shell .puzzle-hud, .game-shell .runner-hud {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 10px;
-      color: #e8f7ff;
-      font-size: 0.95rem;
-      flex-wrap: wrap;
+    .puzzle-tile.selected {
+      outline: 2px solid #8dffbf;
+      transform: translateY(-2px);
     }
-    .game-shell .btn-small {
+    .puzzle-tile::after {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+    .btn-small {
       border: none;
       border-radius: 999px;
       padding: 8px 12px;
@@ -171,6 +248,9 @@
     @media (max-width: 760px) {
       .game-menu {
         grid-template-columns: 1fr;
+      }
+      .game-panel-header {
+        flex-direction: column;
       }
     }
   </style>
@@ -226,273 +306,761 @@
     const gameButtons = Array.from(document.querySelectorAll('.game-card'));
     const gameScreen = document.getElementById('game-screen');
     const gameIntro = document.getElementById('game-intro');
+    let activeCleanup = () => {};
+    let activeFrame = null;
 
     function clearGameScreen() {
+      if (activeFrame) {
+        cancelAnimationFrame(activeFrame);
+        activeFrame = null;
+      }
+      activeCleanup();
+      activeCleanup = () => {};
       gameScreen.innerHTML = '';
       gameIntro.style.display = 'block';
     }
 
     function startRunnerGame() {
       gameIntro.style.display = 'none';
-      gameScreen.innerHTML = '<div class="runner-hud"><span id="runner-score">Score: 0</span><span>Move with ← → or A / D</span><button class="btn-small" id="runner-restart">Restart</button></div><canvas id="runner-canvas" width="560" height="320"></canvas>';
+      gameScreen.innerHTML = `
+        <div class="game-panel">
+          <div class="game-panel-header">
+            <div class="stat-pill">
+              <strong>Neon Drift</strong>
+              <span>Arcade survival with lane changes, jumps, pickups, and adaptive speed.</span>
+            </div>
+            <div class="stat-pill">
+              <strong>Controls</strong>
+              <span>← / → or A / D to swap lanes · Space to jump</span>
+            </div>
+          </div>
+          <div class="hud-grid">
+            <div class="metric"><span class="label">Score</span><span class="value" id="runner-score">0</span></div>
+            <div class="metric"><span class="label">Health</span><span class="value" id="runner-health">100</span></div>
+            <div class="metric"><span class="label">Combo</span><span class="value" id="runner-combo">x1.0</span></div>
+            <div class="metric"><span class="label">Speed</span><span class="value" id="runner-speed">1.0x</span></div>
+          </div>
+          <div class="message-line" id="runner-message">Stay mobile, collect glow orbs, and survive the neon storm.</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+            <button class="btn-small" id="runner-restart">Restart run</button>
+            <span style="color:#cfe4ea;">Jump over hazards and grab the glowing pickups.</span>
+          </div>
+          <canvas id="runner-canvas" width="720" height="420"></canvas>
+        </div>`;
+
       const canvas = document.getElementById('runner-canvas');
       const ctx = canvas.getContext('2d');
-      const keys = { left: false, right: false };
-      let score = 0;
-      let over = false;
-      let playerX = 280;
-      let playerY = 240;
-      let speed = 0;
-      const stars = Array.from({ length: 40 }, () => ({ x: Math.random() * 560, y: Math.random() * 320, r: Math.random() * 1.6 + 0.4 }));
-      const obstacles = [];
       const scoreEl = document.getElementById('runner-score');
+      const healthEl = document.getElementById('runner-health');
+      const comboEl = document.getElementById('runner-combo');
+      const speedEl = document.getElementById('runner-speed');
+      const messageEl = document.getElementById('runner-message');
       const restartBtn = document.getElementById('runner-restart');
+      const lanes = [180, 360, 540];
+      const keys = { left: false, right: false, jump: false };
+      const state = {
+        lane: 1,
+        x: lanes[1],
+        y: 318,
+        vy: 0,
+        score: 0,
+        health: 100,
+        combo: 1,
+        speed: 1,
+        time: 0,
+        gameOver: false,
+        obstacles: [],
+        pickups: [],
+        particles: []
+      };
+      let lastTime = 0;
+      const groundY = 318;
+
+      function updateHud() {
+        scoreEl.textContent = Math.floor(state.score);
+        healthEl.textContent = Math.max(0, Math.floor(state.health));
+        comboEl.textContent = `x${state.combo.toFixed(1)}`;
+        speedEl.textContent = `${state.speed.toFixed(1)}x`;
+      }
 
       function reset() {
-        score = 0;
-        over = false;
-        playerX = 280;
-        speed = 0;
-        obstacles.length = 0;
-        for (let i = 0; i < 4; i += 1) obstacles.push({ x: 560 + i * 140, y: 220 + (i % 2) * 40, w: 30, h: 28 });
+        state.lane = 1;
+        state.x = lanes[1];
+        state.y = groundY;
+        state.vy = 0;
+        state.score = 0;
+        state.health = 100;
+        state.combo = 1;
+        state.speed = 1;
+        state.time = 0;
+        state.gameOver = false;
+        state.obstacles = [];
+        state.pickups = [];
+        state.particles = [];
+        messageEl.textContent = 'Stay mobile, collect glow orbs, and survive the neon storm.';
+        updateHud();
+      }
+
+      function spawnObstacle() {
+        const lane = Math.floor(Math.random() * 3);
+        const type = Math.random() < 0.65 ? 'block' : (Math.random() < 0.5 ? 'drone' : 'spike');
+        const width = type === 'block' ? 44 : (type === 'drone' ? 38 : 34);
+        const height = type === 'block' ? 42 : (type === 'drone' ? 24 : 28);
+        state.obstacles.push({ x: 760, lane, type, y: groundY - height + 8, width, height });
+      }
+
+      function spawnPickup() {
+        const lane = Math.floor(Math.random() * 3);
+        const kind = Math.random() < 0.6 ? 'coin' : 'shield';
+        state.pickups.push({ x: 760, lane, kind, y: groundY - 40, size: kind === 'coin' ? 14 : 18 });
+      }
+
+      function hitPlayer() {
+        if (state.gameOver) return;
+        state.health -= 18;
+        state.combo = 1;
+        state.particles.push(...Array.from({ length: 10 }, () => ({ x: state.x, y: state.y - 10, vx: (Math.random() - 0.5) * 180, vy: (Math.random() - 0.5) * 180, life: 0.5 + Math.random() * 0.25, color: '#ff5c7a', size: 3 + Math.random() * 3 })));
+        messageEl.textContent = 'Impact detected. Recover with coins and shields.';
+        if (state.health <= 0) {
+          state.health = 0;
+          state.gameOver = true;
+          messageEl.textContent = 'Run ended. Press restart to launch again.';
+        }
       }
 
       function handleKeyDown(event) {
-        if (event.key === 'ArrowLeft' || event.key.toLowerCase() === 'a') keys.left = true;
-        if (event.key === 'ArrowRight' || event.key.toLowerCase() === 'd') keys.right = true;
-        if (event.key === ' ' && over) reset();
-      }
-      function handleKeyUp(event) {
-        if (event.key === 'ArrowLeft' || event.key.toLowerCase() === 'a') keys.left = false;
-        if (event.key === 'ArrowRight' || event.key.toLowerCase() === 'd') keys.right = false;
-      }
-      window.addEventListener('keydown', handleKeyDown);
-      window.addEventListener('keyup', handleKeyUp);
-      restartBtn.addEventListener('click', reset);
-
-      function update() {
-        if (over) return;
-        if (keys.left) playerX -= 6;
-        if (keys.right) playerX += 6;
-        playerX = Math.max(24, Math.min(536, playerX));
-        if (Math.random() < 0.025) obstacles.push({ x: 560, y: 180 + Math.random() * 120, w: 30, h: 22 + Math.random() * 18 });
-        for (const obs of obstacles) {
-          obs.x -= 5 + speed * 0.4;
-          if (obs.x + obs.w < 0) obs.dead = true;
-          if (playerX + 16 > obs.x && playerX - 16 < obs.x + obs.w && playerY + 16 > obs.y && playerY - 16 < obs.y + obs.h) over = true;
+        const key = event.key.toLowerCase();
+        if (key === 'arrowleft' || key === 'a') keys.left = true;
+        if (key === 'arrowright' || key === 'd') keys.right = true;
+        if (key === ' ' || key === 'arrowup' || key === 'w') {
+          event.preventDefault();
+          keys.jump = true;
         }
-        while (obstacles.length && obstacles[0].dead) obstacles.shift();
-        score += 1;
-        speed = Math.min(3.8, speed + 0.004);
-        scoreEl.textContent = `Score: ${Math.floor(score / 4)}`;
+      }
+
+      function handleKeyUp(event) {
+        const key = event.key.toLowerCase();
+        if (key === 'arrowleft' || key === 'a') keys.left = false;
+        if (key === 'arrowright' || key === 'd') keys.right = false;
+        if (key === ' ' || key === 'arrowup' || key === 'w') keys.jump = false;
+      }
+
+      function update(dt) {
+        if (state.gameOver) return;
+        state.time += dt;
+        state.speed = 1 + Math.min(4.2, state.time / 28);
+        state.combo = Math.max(1, state.combo - dt * 0.05);
+        if (keys.left) {
+          state.lane = Math.max(0, state.lane - 1);
+          keys.left = false;
+        }
+        if (keys.right) {
+          state.lane = Math.min(2, state.lane + 1);
+          keys.right = false;
+        }
+        if (keys.jump && state.y >= groundY) {
+          state.vy = -470;
+          keys.jump = false;
+        }
+        state.vy += 1500 * dt;
+        state.y += state.vy * dt;
+        if (state.y > groundY) {
+          state.y = groundY;
+          state.vy = 0;
+        }
+        state.x = lanes[state.lane];
+        state.score += dt * 32 * state.speed;
+
+        if (Math.random() < 0.008 + dt * 0.04) spawnObstacle();
+        if (Math.random() < 0.0035 + dt * 0.0014) spawnPickup();
+
+        state.obstacles.forEach(obstacle => {
+          obstacle.x -= dt * 390 * state.speed;
+          const playerBox = { x: state.x - 24, y: state.y - 26, w: 48, h: 52 };
+          const hitBox = { x: obstacle.x, y: obstacle.y, w: obstacle.width, h: obstacle.height };
+          if (playerBox.x + playerBox.w > hitBox.x && playerBox.x < hitBox.x + hitBox.w && playerBox.y + playerBox.h > hitBox.y && playerBox.y < hitBox.y + hitBox.h) {
+            hitPlayer();
+            obstacle.x = -1000;
+          }
+        });
+
+        state.pickups.forEach(pickup => {
+          pickup.x -= dt * 320 * state.speed;
+          const playerBox = { x: state.x - 16, y: state.y - 18, w: 32, h: 36 };
+          if (playerBox.x + playerBox.w > pickup.x - pickup.size && playerBox.x < pickup.x + pickup.size && playerBox.y + playerBox.h > pickup.y - pickup.size && playerBox.y < pickup.y + pickup.size) {
+            if (pickup.kind === 'coin') {
+              state.score += 120;
+              state.combo = Math.min(8, state.combo + 0.6);
+              state.particles.push(...Array.from({ length: 8 }, () => ({ x: pickup.x, y: pickup.y, vx: (Math.random() - 0.5) * 140, vy: (Math.random() - 0.5) * 140, life: 0.45, color: '#ffd166', size: 2 + Math.random() * 2 })));
+              messageEl.textContent = 'Coin collected. The combo is building.';
+            } else {
+              state.health = Math.min(100, state.health + 20);
+              state.combo = Math.min(8, state.combo + 0.3);
+              state.particles.push(...Array.from({ length: 8 }, () => ({ x: pickup.x, y: pickup.y, vx: (Math.random() - 0.5) * 140, vy: (Math.random() - 0.5) * 140, life: 0.45, color: '#7fd1ff', size: 2 + Math.random() * 2 })));
+              messageEl.textContent = 'Shield restored. You are back in the flow.';
+            }
+            pickup.x = -1000;
+          }
+        });
+
+        state.obstacles = state.obstacles.filter(obstacle => obstacle.x > -80);
+        state.pickups = state.pickups.filter(pickup => pickup.x > -80);
+        state.particles.forEach(particle => { particle.x += particle.vx * dt; particle.y += particle.vy * dt; particle.life -= dt; });
+        state.particles = state.particles.filter(particle => particle.life > 0);
+        updateHud();
+      }
+
+      function drawBackground() {
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        gradient.addColorStop(0, '#060a14');
+        gradient.addColorStop(0.5, '#0c1630');
+        gradient.addColorStop(1, '#09131f');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(255,255,255,0.8)';
+        for (let i = 0; i < 70; i += 1) {
+          const x = (i * 37 + state.time * 24) % 760;
+          const y = (i * 27) % 240;
+          ctx.beginPath();
+          ctx.arc(x, y, 1.4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.fillStyle = '#0f2134';
+        for (let i = 0; i < 8; i += 1) {
+          const base = 80 + i * 70;
+          ctx.fillRect(base, 295, 48, 90);
+        }
+        ctx.fillStyle = '#1e2f45';
+        for (let i = 0; i < 8; i += 1) {
+          const base = 60 + i * 94;
+          ctx.fillRect(base, 320, 38, 65);
+        }
+        ctx.strokeStyle = 'rgba(127,209,255,0.25)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, 350);
+        ctx.lineTo(canvas.width, 350);
+        ctx.stroke();
       }
 
       function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        g.addColorStop(0, '#06111d');
-        g.addColorStop(1, '#0d1e2b');
-        ctx.fillStyle = g;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        stars.forEach(star => {
-          star.y += 0.8;
-          if (star.y > 320) { star.y = 0; star.x = Math.random() * 560; }
-          ctx.fillStyle = '#dff7ff';
-          ctx.beginPath(); ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2); ctx.fill();
+        drawBackground();
+        state.particles.forEach(particle => {
+          ctx.fillStyle = particle.color;
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+          ctx.fill();
         });
+        state.obstacles.forEach(obstacle => {
+          ctx.fillStyle = obstacle.type === 'drone' ? '#ff5c7a' : (obstacle.type === 'spike' ? '#6a7dff' : '#ff9966');
+          ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+          if (obstacle.type === 'drone') {
+            ctx.fillStyle = '#ffe99a';
+            ctx.fillRect(obstacle.x + 10, obstacle.y + 6, 12, 8);
+          }
+        });
+        state.pickups.forEach(pickup => {
+          ctx.fillStyle = pickup.kind === 'coin' ? '#ffd166' : '#7fd1ff';
+          ctx.beginPath();
+          ctx.arc(pickup.x, pickup.y, pickup.size, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.save();
+        ctx.translate(state.x, state.y);
+        const glow = ctx.createRadialGradient(0, -4, 4, 0, -4, 24);
+        glow.addColorStop(0, '#ffffff');
+        glow.addColorStop(0.35, '#7fd1ff');
+        glow.addColorStop(1, 'rgba(127,209,255,0)');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(0, 0, 24, 0, Math.PI * 2);
+        ctx.fill();
         ctx.fillStyle = '#7fd1ff';
-        ctx.beginPath(); ctx.arc(playerX, playerY, 16, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#ff5c7a';
-        obstacles.forEach(obs => { ctx.fillRect(obs.x, obs.y, obs.w, obs.h); });
-        if (over) {
-          ctx.fillStyle = 'rgba(255,255,255,0.9)';
-          ctx.font = 'bold 32px Arial';
-          ctx.fillText('Run Complete', 150, 150);
-          ctx.font = '16px Arial';
-          ctx.fillText('Press space or restart to play again', 150, 182);
+        ctx.fillRect(-12, 10, 24, 18);
+        ctx.fillRect(-8, -8, 16, 20);
+        ctx.restore();
+
+        if (state.gameOver) {
+          ctx.fillStyle = 'rgba(0,0,0,0.58)';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 34px Arial';
+          ctx.fillText('Neon run terminated', 190, 182);
+          ctx.font = '18px Arial';
+          ctx.fillText('Press restart or reload the game to try again', 168, 220);
         }
       }
 
-      function loop() {
-        update();
+      function loop(timestamp) {
+        if (!lastTime) lastTime = timestamp;
+        const dt = Math.min(0.033, (timestamp - lastTime) / 1000);
+        lastTime = timestamp;
+        update(dt);
         draw();
-        requestAnimationFrame(loop);
+        activeFrame = requestAnimationFrame(loop);
       }
 
-      reset();
-      loop();
-      window.addEventListener('beforeunload', () => {
+      const cleanup = () => {
         window.removeEventListener('keydown', handleKeyDown);
         window.removeEventListener('keyup', handleKeyUp);
-      });
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      window.addEventListener('keyup', handleKeyUp);
+      restartBtn.addEventListener('click', reset);
+      activeCleanup = cleanup;
+      reset();
+      activeFrame = requestAnimationFrame(loop);
     }
 
     function startPuzzleGame() {
       gameIntro.style.display = 'none';
-      gameScreen.innerHTML = '<div class="runner-hud"><span id="puzzle-score">Score: 0</span><span>Swap adjacent glowing tiles to make 3 in a row</span><button class="btn-small" id="puzzle-reset">Reset</button></div><div id="puzzle-grid" class="puzzle-grid"></div>';
+      gameScreen.innerHTML = `
+        <div class="game-panel">
+          <div class="game-panel-header">
+            <div class="stat-pill">
+              <strong>Astra Match</strong>
+              <span>Swap luminous tiles to create cascading matches and explosive chain reactions.</span>
+            </div>
+            <div class="stat-pill">
+              <strong>Goal</strong>
+              <span>Reach 2500 points by making chains of three or more.</span>
+            </div>
+          </div>
+          <div class="hud-grid">
+            <div class="metric"><span class="label">Score</span><span class="value" id="puzzle-score">0</span></div>
+            <div class="metric"><span class="label">Combo</span><span class="value" id="puzzle-combo">x1</span></div>
+            <div class="metric"><span class="label">Goal</span><span class="value" id="puzzle-goal">2500</span></div>
+            <div class="metric"><span class="label">Turns</span><span class="value" id="puzzle-turns">0</span></div>
+          </div>
+          <div class="message-line" id="puzzle-message">Select adjacent tiles and build luminous chains.</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+            <button class="btn-small" id="puzzle-reset">Reset board</button>
+            <span style="color:#cfe4ea;">Make lines of three or more to score and clear the board.</span>
+          </div>
+          <div id="puzzle-grid" class="puzzle-grid"></div>
+        </div>`;
+
       const gridEl = document.getElementById('puzzle-grid');
       const scoreEl = document.getElementById('puzzle-score');
+      const comboEl = document.getElementById('puzzle-combo');
+      const goalEl = document.getElementById('puzzle-goal');
+      const turnsEl = document.getElementById('puzzle-turns');
+      const messageEl = document.getElementById('puzzle-message');
       const resetBtn = document.getElementById('puzzle-reset');
-      const colors = ['#ff6b6b', '#4ecdc4', '#ffd166', '#7d7cff', '#8bff8f'];
+      const colors = ['#ff6b6b', '#4ecdc4', '#ffd166', '#7d7cff', '#8bff8f', '#ff7ad9'];
+      const goal = 2500;
       let grid = [];
       let selected = null;
       let score = 0;
+      let combo = 1;
+      let turns = 0;
 
       function makeGrid() {
-        grid = Array.from({ length: 25 }, () => colors[Math.floor(Math.random() * colors.length)]);
+        grid = Array.from({ length: 36 }, () => ({ color: colors[Math.floor(Math.random() * colors.length)], special: false }));
+      }
+
+      function updateHud() {
+        scoreEl.textContent = score;
+        comboEl.textContent = `x${combo}`;
+        goalEl.textContent = goal;
+        turnsEl.textContent = turns;
+      }
+
+      function settleBoard() {
+        const newGrid = [];
+        for (let col = 0; col < 6; col += 1) {
+          const column = [];
+          for (let row = 0; row < 6; row += 1) {
+            if (grid[row * 6 + col]) column.push(grid[row * 6 + col]);
+          }
+          while (column.length < 6) {
+            column.unshift({ color: colors[Math.floor(Math.random() * colors.length)], special: false });
+          }
+          newGrid.push(...column);
+        }
+        grid = newGrid;
       }
 
       function render() {
         gridEl.innerHTML = '';
-        grid.forEach((color, index) => {
-          const tile = document.createElement('button');
-          tile.className = 'puzzle-tile';
-          tile.style.background = color;
-          tile.dataset.index = index;
-          tile.addEventListener('click', () => handleTile(index));
-          gridEl.appendChild(tile);
+        grid.forEach((tile, index) => {
+          const button = document.createElement('button');
+          button.className = 'puzzle-tile';
+          if (selected === index) button.classList.add('selected');
+          button.style.background = tile.color;
+          button.addEventListener('click', () => handleTile(index));
+          gridEl.appendChild(button);
         });
-        scoreEl.textContent = `Score: ${score}`;
+        updateHud();
+      }
+
+      function swap(a, b) {
+        const temp = grid[a];
+        grid[a] = grid[b];
+        grid[b] = temp;
+      }
+
+      function findMatches() {
+        const matched = new Set();
+        for (let row = 0; row < 6; row += 1) {
+          for (let col = 0; col < 6; col += 1) {
+            const start = row * 6 + col;
+            const color = grid[start].color;
+            let run = 1;
+            let idx = start + 1;
+            while (idx % 6 !== 0 && grid[idx] && grid[idx].color === color) {
+              run += 1;
+              idx += 1;
+            }
+            if (run >= 3) {
+              for (let i = 0; i < run; i += 1) matched.add(start + i);
+            }
+            run = 1;
+            idx = start + 6;
+            while (idx < 36 && grid[idx] && grid[idx].color === color) {
+              run += 1;
+              idx += 6;
+            }
+            if (run >= 3) {
+              for (let i = 0; i < run; i += 1) matched.add(start + i * 6);
+            }
+          }
+        }
+        return Array.from(matched);
+      }
+
+      function clearMatches(matches) {
+        if (!matches.length) return 0;
+        const points = matches.length * (10 + combo * 8) + (matches.length >= 4 ? 200 : 0);
+        score += points;
+        combo = Math.min(12, combo + 1);
+        messageEl.textContent = `Chain burst! +${points} points.`;
+        matches.forEach(index => {
+          grid[index] = null;
+        });
+        grid = grid.filter(Boolean);
+        settleBoard();
+        turns += 1;
+        updateHud();
+        return points;
       }
 
       function handleTile(index) {
         if (selected === null) {
           selected = index;
+          render();
           return;
         }
-        const rowA = Math.floor(selected / 5);
-        const colA = selected % 5;
-        const rowB = Math.floor(index / 5);
-        const colB = index % 5;
+        const rowA = Math.floor(selected / 6);
+        const colA = selected % 6;
+        const rowB = Math.floor(index / 6);
+        const colB = index % 6;
         if (Math.abs(rowA - rowB) + Math.abs(colA - colB) !== 1) {
           selected = index;
+          render();
           return;
         }
-        const temp = grid[selected];
-        grid[selected] = grid[index];
-        grid[index] = temp;
-        if (!checkForMatches()) {
-          grid[selected] = grid[index];
-          grid[index] = temp;
+        swap(selected, index);
+        const matches = findMatches();
+        if (!matches.length) {
+          swap(selected, index);
+          messageEl.textContent = 'No match. Try a different pair.';
+          combo = 1;
+          turns += 1;
         } else {
-          score += 1;
+          clearMatches(matches);
+          if (score >= goal) {
+            messageEl.textContent = 'Astra circuit complete. The board is glowing with victory.';
+          }
         }
         selected = null;
         render();
       }
 
-      function checkForMatches() {
-        const toClear = new Set();
-        for (let row = 0; row < 5; row += 1) {
-          for (let col = 0; col < 5; col += 1) {
-            const color = grid[row * 5 + col];
-            let count = 1;
-            for (let c = col + 1; c < 5; c += 1) if (grid[row * 5 + c] === color) count += 1; else break;
-            if (count >= 3) for (let c = 0; c < count; c += 1) toClear.add(row * 5 + col + c);
-            count = 1;
-            for (let r = row + 1; r < 5; r += 1) if (grid[r * 5 + col] === color) count += 1; else break;
-            if (count >= 3) for (let r = 0; r < count; r += 1) toClear.add((row + r) * 5 + col);
-          }
-        }
-        if (toClear.size) {
-          toClear.forEach(index => { grid[index] = null; });
-          grid = grid.filter(Boolean);
-          while (grid.length < 25) grid.push(colors[Math.floor(Math.random() * colors.length)]);
-          return true;
-        }
-        return false;
-      }
-
       resetBtn.addEventListener('click', () => {
         score = 0;
+        combo = 1;
+        turns = 0;
         makeGrid();
         render();
+        messageEl.textContent = 'The board has been reset. Start a new chain.';
       });
       makeGrid();
       render();
+      activeCleanup = () => {};
     }
 
     function startShooterGame() {
       gameIntro.style.display = 'none';
-      gameScreen.innerHTML = '<div class="runner-hud"><span id="shooter-score">Score: 0</span><span>Click to fire, dodge the meteors</span><button class="btn-small" id="shooter-restart">Restart</button></div><canvas id="shooter-canvas" width="560" height="320"></canvas>';
+      gameScreen.innerHTML = `
+        <div class="game-panel">
+          <div class="game-panel-header">
+            <div class="stat-pill">
+              <strong>Comet Clash</strong>
+              <span>Defend the sky with rapid fire, power bursts, and escalating waves.</span>
+            </div>
+            <div class="stat-pill">
+              <strong>Controls</strong>
+              <span>Move with the mouse · Click or hold to fire · Space for burst</span>
+            </div>
+          </div>
+          <div class="hud-grid">
+            <div class="metric"><span class="label">Score</span><span class="value" id="shooter-score">0</span></div>
+            <div class="metric"><span class="label">Health</span><span class="value" id="shooter-health">100</span></div>
+            <div class="metric"><span class="label">Wave</span><span class="value" id="shooter-wave">1</span></div>
+            <div class="metric"><span class="label">Burst</span><span class="value" id="shooter-burst">0%</span></div>
+          </div>
+          <div class="message-line" id="shooter-message">Hold the line. Every meteor you destroy powers the burst cannon.</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+            <button class="btn-small" id="shooter-restart">Restart defense</button>
+            <span style="color:#cfe4ea;">Destroy incoming comets before they reach the shield line.</span>
+          </div>
+          <canvas id="shooter-canvas" width="720" height="420"></canvas>
+        </div>`;
+
       const canvas = document.getElementById('shooter-canvas');
       const ctx = canvas.getContext('2d');
-      const state = { score: 0, playerX: 280, bullets: [], meteors: [], over: false };
       const scoreEl = document.getElementById('shooter-score');
+      const healthEl = document.getElementById('shooter-health');
+      const waveEl = document.getElementById('shooter-wave');
+      const burstEl = document.getElementById('shooter-burst');
+      const messageEl = document.getElementById('shooter-message');
       const restartBtn = document.getElementById('shooter-restart');
+      const state = {
+        score: 0,
+        health: 100,
+        wave: 1,
+        burst: 0,
+        playerX: 360,
+        playerY: 360,
+        bullets: [],
+        enemies: [],
+        particles: [],
+        over: false,
+        firing: false,
+        fireCooldown: 0,
+        spawnTimer: 0,
+        combo: 1,
+        time: 0
+      };
+      let lastTime = 0;
 
       function reset() {
         state.score = 0;
-        state.playerX = 280;
+        state.health = 100;
+        state.wave = 1;
+        state.burst = 0;
+        state.playerX = 360;
+        state.playerY = 360;
         state.bullets = [];
-        state.meteors = [];
+        state.enemies = [];
+        state.particles = [];
         state.over = false;
+        state.firing = false;
+        state.fireCooldown = 0;
+        state.spawnTimer = 0;
+        state.combo = 1;
+        state.time = 0;
+        updateHud();
+        messageEl.textContent = 'Hold the line. Every meteor you destroy powers the burst cannon.';
+      }
+
+      function updateHud() {
+        scoreEl.textContent = state.score;
+        healthEl.textContent = Math.max(0, Math.floor(state.health));
+        waveEl.textContent = state.wave;
+        burstEl.textContent = `${Math.floor(state.burst)}%`;
       }
 
       function shoot() {
         if (state.over) return;
-        state.bullets.push({ x: state.playerX, y: 280, r: 4 });
+        state.bullets.push({ x: state.playerX, y: state.playerY - 20, vy: -700, r: 4, color: '#ffd166' });
+        state.burst = Math.min(100, state.burst + 3.2);
       }
 
-      canvas.addEventListener('mousemove', (event) => {
+      function burstShot() {
+        if (state.over || state.burst < 100) return;
+        for (let i = 0; i < 10; i += 1) {
+          const angle = (i / 10) * Math.PI + Math.PI / 2;
+          state.bullets.push({ x: state.playerX, y: state.playerY - 20, vy: -700 * Math.cos(angle), vx: 240 * Math.sin(angle), r: 3, color: '#7fd1ff' });
+        }
+        state.burst = 0;
+        messageEl.textContent = 'Burst cannon unleashed. The sky is trembling.';
+      }
+
+      function spawnEnemy() {
+        const type = Math.random() < 0.7 ? 'meteor' : (Math.random() < 0.5 ? 'drone' : 'bomber');
+        const size = type === 'meteor' ? 18 : (type === 'drone' ? 14 : 24);
+        const hp = type === 'meteor' ? 1 : (type === 'drone' ? 2 : 3);
+        state.enemies.push({ x: Math.random() * 720, y: -40, vx: (Math.random() - 0.5) * 90, vy: 140 + state.wave * 35, size, hp, type, wobble: Math.random() * Math.PI * 2 });
+      }
+
+      function handleMouseMove(event) {
         const rect = canvas.getBoundingClientRect();
-        state.playerX = ((event.clientX - rect.left) / rect.width) * 560;
-      });
-      canvas.addEventListener('click', shoot);
-      restartBtn.addEventListener('click', reset);
-
-      function update() {
-        if (state.over) return;
-        if (Math.random() < 0.03) state.meteors.push({ x: Math.random() * 560, y: -20, r: 12 + Math.random() * 12 });
-        state.bullets.forEach(b => { b.y -= 10; });
-        state.bullets = state.bullets.filter(b => b.y > -10);
-        state.meteors.forEach(m => { m.y += 3; });
-        state.meteors = state.meteors.filter(m => m.y < 340);
-        state.bullets.forEach(b => {
-          state.meteors.forEach((m, index) => {
-            if (Math.abs(b.x - m.x) < 18 && Math.abs(b.y - m.y) < 18) {
-              state.score += 1;
-              state.bullets.splice(state.bullets.indexOf(b), 1);
-              state.meteors.splice(index, 1);
-            }
-          });
-        });
-        state.meteors.forEach(m => {
-          if (m.y + m.r > 280 && Math.abs(m.x - state.playerX) < 20) state.over = true;
-        });
-        scoreEl.textContent = `Score: ${state.score}`;
+        state.playerX = ((event.clientX - rect.left) / rect.width) * 720;
       }
 
-      function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        g.addColorStop(0, '#050713');
-        g.addColorStop(1, '#111d31');
-        ctx.fillStyle = g;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#7fd1ff';
-        ctx.beginPath(); ctx.arc(state.playerX, 280, 18, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#ff6b6b';
-        state.meteors.forEach(m => { ctx.beginPath(); ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2); ctx.fill(); });
-        ctx.fillStyle = '#ffd166';
-        state.bullets.forEach(b => { ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill(); });
-        if (state.over) {
-          ctx.fillStyle = 'rgba(255,255,255,0.95)';
-          ctx.font = 'bold 28px Arial';
-          ctx.fillText('Sky Protected', 150, 148);
-          ctx.font = '16px Arial';
-          ctx.fillText('Click restart to play again', 150, 180);
+      function handleMouseDown() {
+        state.firing = true;
+      }
+
+      function handleMouseUp() {
+        state.firing = false;
+      }
+
+      function handleKeyDown(event) {
+        if (event.code === 'Space') {
+          event.preventDefault();
+          burstShot();
         }
       }
 
-      function loop() {
-        update();
-        draw();
-        requestAnimationFrame(loop);
+      function update(dt) {
+        if (state.over) return;
+        state.time += dt;
+        state.spawnTimer += dt;
+        const targetRate = Math.max(0.18, 0.75 - state.wave * 0.04);
+        if (state.spawnTimer > targetRate) {
+          state.spawnTimer = 0;
+          spawnEnemy();
+        }
+        state.fireCooldown = Math.max(0, state.fireCooldown - dt);
+        if (state.firing && state.fireCooldown <= 0) {
+          shoot();
+          state.fireCooldown = 0.12;
+        }
+        state.bullets.forEach(bullet => {
+          bullet.x += (bullet.vx || 0) * dt;
+          bullet.y += bullet.vy * dt;
+        });
+        state.bullets = state.bullets.filter(bullet => bullet.y > -10 && bullet.x > -10 && bullet.x < 730);
+        state.enemies.forEach(enemy => {
+          enemy.x += enemy.vx * dt;
+          enemy.y += enemy.vy * dt;
+          enemy.x += Math.sin(enemy.wobble + state.time * 1.8) * 12 * dt;
+          enemy.wobble += 0.05;
+          if (enemy.y > 360 && Math.abs(enemy.x - state.playerX) < 26) {
+            state.health -= 20;
+            state.combo = 1;
+            messageEl.textContent = 'A comet breached the shield. Recover and refocus.';
+            enemy.hp = 0;
+          }
+        });
+        state.enemies = state.enemies.filter(enemy => enemy.hp > 0 && enemy.y < 480);
+        state.bullets.forEach(bullet => {
+          state.enemies.forEach(enemy => {
+            const dx = bullet.x - enemy.x;
+            const dy = bullet.y - enemy.y;
+            if (Math.abs(dx) < enemy.size + 6 && Math.abs(dy) < enemy.size + 6) {
+              enemy.hp -= 1;
+              bullet.y = -1000;
+              state.burst = Math.min(100, state.burst + 2.8);
+              state.score += 18 + state.wave * 5;
+              state.combo = Math.min(10, state.combo + 0.4);
+              if (enemy.hp <= 0) {
+                state.score += 40;
+                state.combo = Math.min(10, state.combo + 0.8);
+                state.particles.push(...Array.from({ length: 12 }, () => ({ x: enemy.x, y: enemy.y, vx: (Math.random() - 0.5) * 220, vy: (Math.random() - 0.5) * 220, life: 0.45, color: enemy.type === 'meteor' ? '#ff6b6b' : '#7fd1ff', size: 2 + Math.random() * 3 })));
+                messageEl.textContent = 'Comet destroyed. Pressure is mounting.';
+              }
+            }
+          });
+        });
+        state.bullets = state.bullets.filter(bullet => bullet.y > -1000);
+        state.particles.forEach(particle => { particle.x += particle.vx * dt; particle.y += particle.vy * dt; particle.life -= dt; });
+        state.particles = state.particles.filter(particle => particle.life > 0);
+        if (state.health <= 0) {
+          state.over = true;
+          messageEl.textContent = 'The sky has fallen. Restart to defend again.';
+        }
+        if (state.score > state.wave * 540) {
+          state.wave += 1;
+          messageEl.textContent = `Wave ${state.wave} engaged. The storm is intensifying.`;
+        }
+        updateHud();
       }
 
+      function drawBackground() {
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        gradient.addColorStop(0, '#04070f');
+        gradient.addColorStop(1, '#0d1930');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = 'rgba(127,209,255,0.18)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < 12; i += 1) {
+          ctx.beginPath();
+          ctx.moveTo(0, 50 + i * 24);
+          ctx.lineTo(canvas.width, 30 + i * 20);
+          ctx.stroke();
+        }
+        ctx.fillStyle = '#7fd1ff';
+        ctx.fillRect(0, 340, canvas.width, 80);
+      }
+
+      function draw() {
+        drawBackground();
+        state.particles.forEach(particle => {
+          ctx.fillStyle = particle.color;
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        state.enemies.forEach(enemy => {
+          ctx.fillStyle = enemy.type === 'meteor' ? '#ff6b6b' : (enemy.type === 'drone' ? '#6a7dff' : '#ff9966');
+          ctx.beginPath();
+          ctx.arc(enemy.x, enemy.y, enemy.size, 0, Math.PI * 2);
+          ctx.fill();
+          if (enemy.type === 'drone') {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(enemy.x - 4, enemy.y - 2, 8, 4);
+          }
+        });
+        state.bullets.forEach(bullet => {
+          ctx.fillStyle = bullet.color;
+          ctx.beginPath();
+          ctx.arc(bullet.x, bullet.y, bullet.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.fillStyle = '#7fd1ff';
+        ctx.beginPath();
+        ctx.arc(state.playerX, state.playerY, 18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillRect(state.playerX - 8, state.playerY + 12, 16, 20);
+        if (state.over) {
+          ctx.fillStyle = 'rgba(0,0,0,0.6)';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 34px Arial';
+          ctx.fillText('Sky shield broken', 220, 182);
+          ctx.font = '18px Arial';
+          ctx.fillText('Restart to defend the skyline again', 220, 220);
+        }
+      }
+
+      function loop(timestamp) {
+        if (!lastTime) lastTime = timestamp;
+        const dt = Math.min(0.033, (timestamp - lastTime) / 1000);
+        lastTime = timestamp;
+        update(dt);
+        draw();
+        activeFrame = requestAnimationFrame(loop);
+      }
+
+      const cleanup = () => {
+        canvas.removeEventListener('mousemove', handleMouseMove);
+        canvas.removeEventListener('mousedown', handleMouseDown);
+        canvas.removeEventListener('mouseup', handleMouseUp);
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+      canvas.addEventListener('mousemove', handleMouseMove);
+      canvas.addEventListener('mousedown', handleMouseDown);
+      canvas.addEventListener('mouseup', handleMouseUp);
+      window.addEventListener('keydown', handleKeyDown);
+      restartBtn.addEventListener('click', reset);
+      activeCleanup = cleanup;
       reset();
-      loop();
+      activeFrame = requestAnimationFrame(loop);
     }
 
     function loadGame(game) {
@@ -509,7 +1077,6 @@
     }));
 
     loadGame('runner');
-
   </script>
 </body>
 </html>
