@@ -94,6 +94,52 @@
       background: rgba(2, 6, 12, 0.95);
       backdrop-filter: blur(8px);
     }
+    .mobile-wait-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(2, 6, 12, 0.95);
+      backdrop-filter: blur(8px);
+    }
+    .mobile-wait-card {
+      width: min(500px, 100%);
+      padding: 24px;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(8, 16, 28, 0.95);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.35);
+      text-align: center;
+    }
+    .mobile-wait-card h3 {
+      margin: 0 0 8px;
+      color: #ffffff;
+      font-size: clamp(1.2rem, 3vw, 1.6rem);
+    }
+    .mobile-wait-card p {
+      margin: 0;
+      line-height: 1.6;
+      color: #cfe4ea;
+    }
+    .ip-footer {
+      position: fixed;
+      left: 50%;
+      bottom: 14px;
+      transform: translateX(-50%);
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.8);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+      padding: 7px 12px;
+      border-radius: 999px;
+      backdrop-filter: blur(6px);
+      z-index: 999;
+    }
     .gate-card {
       width: min(560px, 100%);
       padding: 24px;
@@ -390,6 +436,15 @@
     </div>
   </div>
 
+  <div id="mobile-wait" class="mobile-wait-overlay hidden">
+    <div class="mobile-wait-card">
+      <h3>Please wait</h3>
+      <p>Utkarsh is working on the mobile experience. You will be returned to the main screen shortly.</p>
+    </div>
+  </div>
+
+  <div id="ip-display" class="ip-footer">IP: detecting…</div>
+
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -428,6 +483,9 @@
     const gateHint = document.getElementById('gate-hint');
     const deviceChoice = document.getElementById('device-choice');
     const gameChoice = document.getElementById('game-choice');
+    const mobileWait = document.getElementById('mobile-wait');
+    const ipDisplay = document.getElementById('ip-display');
+    const gamesShell = document.querySelector('.games-shell');
     const deviceButtons = Array.from(document.querySelectorAll('[data-device]'));
     const gameChoiceButtons = Array.from(document.querySelectorAll('#game-choice .choice-card'));
     let activeCleanup = () => {};
@@ -443,6 +501,36 @@
       activeCleanup = () => {};
       gameScreen.innerHTML = '';
       gameIntro.style.display = 'block';
+    }
+
+    function showHeaderOnlyView() {
+      gateOverlay.classList.add('hidden');
+      mobileWait.classList.add('hidden');
+      gameView.classList.remove('visible');
+      gamesShell.classList.add('hidden');
+      sectionTitle.style.display = 'none';
+    }
+
+    function showMobileWait() {
+      selectedDevice = 'mobile';
+      showHeaderOnlyView();
+      mobileWait.classList.remove('hidden');
+      setTimeout(() => {
+        mobileWait.classList.add('hidden');
+        gamesShell.classList.add('hidden');
+        gameView.classList.remove('visible');
+      }, 2200);
+    }
+
+    async function loadIpAddress() {
+      ipDisplay.textContent = 'IP: detecting…';
+      try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        ipDisplay.textContent = `IP: ${data.ip}`;
+      } catch (error) {
+        ipDisplay.textContent = 'IP: unavailable';
+      }
     }
 
     function showGateStep(step) {
@@ -462,12 +550,18 @@
     }
 
     deviceButtons.forEach(button => button.addEventListener('click', () => {
-      selectedDevice = button.dataset.device;
+      if (button.dataset.device === 'mobile') {
+        showMobileWait();
+        return;
+      }
+      selectedDevice = 'pc';
       showGateStep('game');
     }));
 
     gameChoiceButtons.forEach(button => button.addEventListener('click', () => {
       gateOverlay.classList.add('hidden');
+      mobileWait.classList.add('hidden');
+      gamesShell.classList.remove('hidden');
       sectionTitle.style.display = 'block';
       gameView.classList.add('visible');
       loadGame(button.dataset.game);
@@ -622,6 +716,7 @@
       if (game === '2048') start2048Game();
     }
 
+    loadIpAddress();
     showGateStep('device');
   </script>
 </body>
