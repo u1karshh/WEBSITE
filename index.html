@@ -61,28 +61,6 @@
       font-weight: 700;
       box-shadow: 0 6px 20px rgba(0,0,0,0.2);
     }
-    .google-signin {
-      margin-top: 20px;
-      display: inline-block;
-      padding: 12px 22px;
-      border-radius: 999px;
-      background: #ffffff;
-      color: #1a1a1a;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 1rem;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
-      transition: transform 0.2s ease;
-    }
-    .google-signin:hover {
-      transform: translateY(-2px);
-    }
-    .google-signin-wrapper {
-      margin-top: 20px;
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-    }
   </style>
 </head>
 <body>
@@ -90,11 +68,9 @@
     <div id="today-date" class="today-date"><strong></strong></div>
     <div id="announcement" class="announcement" aria-live="polite"></div>
     <div id="live-time" class="live-time">00:00:00.000</div>
-    <div id="google-signin-wrapper" class="google-signin-wrapper"></div>
   </div>
 
   <script>
-    const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
     const announcementData = {
       josaa: {
         label: 'JoSAA',
@@ -126,7 +102,12 @@
 
     function updateClock() {
       const now = new Date();
-      document.getElementById('today-date').innerHTML = '<strong>15 Jul 2026</strong>';
+      const date = now.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      });
+      document.getElementById('today-date').innerHTML = `<strong>${date}</strong>`;
       const time = now.toLocaleTimeString('en-GB', {
         hour12: false,
         hour: '2-digit',
@@ -168,16 +149,6 @@
     setInterval(updateClock, 1);
     setInterval(updateAnnouncement, 600000);
 
-    if (!GOOGLE_CLIENT_ID.includes('YOUR_GOOGLE_CLIENT_ID')) {
-      const script = document.createElement('script');
-      script.src = 'https://accounts.google.com/gsi/client';
-      script.async = true;
-      script.defer = true;
-      script.onload = initGoogleSignIn;
-      document.head.appendChild(script);
-    } else {
-      initGoogleSignIn();
-    }
   </script>
 </body>
 </html>
