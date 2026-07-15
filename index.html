@@ -75,7 +75,7 @@
 <body>
   <div class="message-wrap">
     <div id="today-date" class="today-date"><strong></strong></div>
-    <div id="announcement" class="announcement" aria-live="polite">Latest rounds released: JoSAA Round 5, BITSAT Round 4, MHTCET Round 6</div>
+    <div id="announcement" class="announcement" aria-live="polite">Latest 2026 rounds released: JoSAA Round 5, BITSAT Round 4, MHTCET Round 6</div>
     <div id="live-time" class="live-time">00:00:00.000</div>
     <div id="google-signin-wrapper" class="google-signin-wrapper"></div>
   </div>
@@ -91,7 +91,7 @@
 
     function updateAnnouncement() {
       const current = roundUpdates[roundIndex];
-      document.getElementById('announcement').textContent = `Latest rounds released: JoSAA Round ${current.josaa}, BITSAT Round ${current.bitsat}, MHTCET Round ${current.mhtcet}`;
+      document.getElementById('announcement').textContent = `Latest 2026 rounds released: JoSAA Round ${current.josaa}, BITSAT Round ${current.bitsat}, MHTCET Round ${current.mhtcet}`;
       roundIndex = (roundIndex + 1) % roundUpdates.length;
     }
 
