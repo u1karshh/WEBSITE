@@ -38,12 +38,19 @@
       font-weight: 700;
       box-shadow: 0 6px 20px rgba(0,0,0,0.2);
     }
+    .update-status {
+      margin-top: 10px;
+      font-size: 0.95rem;
+      color: #bfc9ce;
+      font-family: Arial, sans-serif;
+    }
   </style>
 </head>
 <body>
   <div class="message-wrap">
     <h1><strong>UTKARSH IS WORKING ON THE WEBSITE</strong></h1>
     <div id="live-time" class="live-time">00:00:00.000</div>
+    <div id="update-status" class="update-status">Last updated from backend: --</div>
   </div>
 
   <script>
@@ -57,6 +64,7 @@
       });
       const ms = String(now.getMilliseconds()).padStart(3, '0');
       document.getElementById('live-time').textContent = `${time}.${ms}`;
+      document.getElementById('update-status').textContent = `Last updated from backend: ${now.toLocaleString()}`;
     }
 
     updateTime();
