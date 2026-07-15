@@ -40,28 +40,6 @@
       color: #ffffff;
       letter-spacing: 0.04em;
     }
-    .announcement {
-      font-size: clamp(1rem, 2vw, 1.3rem);
-      font-weight: 700;
-      margin: 0;
-      line-height: 1.55;
-      color: #f5f7f1;
-      font-family: Arial, sans-serif;
-      max-width: 900px;
-      display: inline-block;
-      text-align: center;
-    }
-    .announcement .status-line {
-      display: block;
-      margin-bottom: 6px;
-    }
-    .announcement a {
-      color: #7fd1ff;
-      text-decoration: none;
-    }
-    .announcement a:hover {
-      text-decoration: underline;
-    }
     .live-time {
       margin-top: 4px;
       display: inline-block;
@@ -82,7 +60,6 @@
   <div class="message-wrap">
     <h1 class="heading">UTKARSH IS WORKING ON THE WEBSITE</h1>
     <div id="today-date" class="today-date"><strong></strong></div>
-    <div id="announcement" class="announcement" aria-live="polite"></div>
     <div id="live-time" class="live-time">00:00:00.000</div>
   </div>
 
@@ -91,35 +68,6 @@
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').catch(() => {});
       });
-    }
-
-    const announcementData = {
-      josaa: {
-        label: 'JoSAA',
-        url: 'https://josaa.nic.in/',
-        status: 'Round 4 seat allocation result is available on the official portal.'
-      },
-      bitsat: {
-        label: 'BITSAT',
-        url: 'https://admissions.bits-pilani.ac.in/',
-        status: 'Official BITS admissions portal is live for 2026 updates.'
-      },
-      mhtcet: {
-        label: 'MHT-CET',
-        url: 'https://cetcell.mahacet.org/',
-        status: 'CAP registration is active, but no CAP round has started yet.'
-      }
-    };
-
-    function updateAnnouncement() {
-      const container = document.getElementById('announcement');
-      if (!container) return;
-
-      const html = Object.values(announcementData)
-        .map(item => `<span class="status-line"><a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.label}</a>: ${item.status}</span>`)
-        .join('');
-
-      container.innerHTML = html;
     }
 
     function updateClock() {
@@ -141,9 +89,7 @@
     }
 
     updateClock();
-    updateAnnouncement();
     setInterval(updateClock, 1);
-    setInterval(updateAnnouncement, 600000);
 
   </script>
 </body>
