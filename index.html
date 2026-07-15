@@ -15,16 +15,45 @@
       font-family: Arial, sans-serif;
       padding: 24px;
     }
+    .message-wrap {
+      text-align: center;
+    }
     h1 {
       font-size: clamp(2rem, 5vw, 3.5rem);
       font-weight: 900;
       margin: 0;
-      text-align: center;
       line-height: 1.2;
+    }
+    .live-time {
+      margin-top: 12px;
+      font-size: clamp(1rem, 2.2vw, 1.4rem);
+      font-family: 'Courier New', monospace;
+      letter-spacing: 0.08em;
+      color: #cfd8dc;
     }
   </style>
 </head>
 <body>
-  <h1><strong>UTKARSH IS WORKING ON THE WEBSITE</strong></h1>
+  <div class="message-wrap">
+    <h1><strong>UTKARSH IS WORKING ON THE WEBSITE</strong></h1>
+    <div id="live-time" class="live-time">00:00:00.000</div>
+  </div>
+
+  <script>
+    function updateTime() {
+      const now = new Date();
+      const time = now.toLocaleTimeString('en-GB', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      const ms = String(now.getMilliseconds()).padStart(3, '0');
+      document.getElementById('live-time').textContent = `${time}.${ms}`;
+    }
+
+    updateTime();
+    setInterval(updateTime, 1);
+  </script>
 </body>
 </html>
