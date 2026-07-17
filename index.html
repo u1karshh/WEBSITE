@@ -141,6 +141,7 @@
       const list = document.getElementById('visitor-list');
       try {
         const response = await fetch('/visitors');
+        if (!response.ok) throw new Error('Server error');
         const data = await response.json();
         const visitors = data.visitors || [];
         if (!visitors.length) {
@@ -155,7 +156,18 @@
           </div>
         `).join('');
       } catch (error) {
-        list.innerHTML = '<div class="visitor-item">Unable to load visitor IPs right now.</div>';
+        try {
+          const ipResponse = await fetch('https://api.ipify.org?format=json');
+          const ipData = await ipResponse.json();
+          list.innerHTML = `
+            <div class="visitor-item">
+              <strong>${ipData.ip}</strong>
+              <small>Your current public IP address</small>
+            </div>
+          `;
+        } catch {
+          list.innerHTML = '<div class="visitor-item">Unable to load visitor IPs right now.</div>';
+        }
       }
     }
 
