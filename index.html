@@ -59,6 +59,41 @@
       color: #cfe4ea;
       opacity: 0.95;
     }
+    .visitor-card {
+      margin-top: 18px;
+      width: min(560px, 100%);
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.2);
+      text-align: left;
+    }
+    .visitor-card h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #7fd1ff;
+    }
+    .visitor-list {
+      display: grid;
+      gap: 8px;
+      max-height: 220px;
+      overflow: auto;
+    }
+    .visitor-item {
+      font-size: 0.95rem;
+      color: #f3f7fb;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+    }
+    .visitor-item small {
+      display: block;
+      color: #9fc9d3;
+      margin-top: 2px;
+    }
     @media (max-width: 760px) {
       body { padding: 10px; align-items: flex-start; }
       .message-wrap { gap: 8px; }
@@ -74,6 +109,13 @@
     <div id="today-date" class="today-date"><strong></strong></div>
     <div id="live-time" class="live-time">00:00:00.000</div>
     <div class="status">The landing page is back and ready.</div>
+
+    <div class="visitor-card">
+      <h2>Recent visitors</h2>
+      <div id="visitor-list" class="visitor-list">
+        <div class="visitor-item">Loading visitor IPs…</div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -94,6 +136,39 @@
 
     updateClock();
     setInterval(updateClock, 1000);
+
+    async function loadVisitors() {
+      const list = document.getElementById('visitor-list');
+      try {
+        const response = await fetch('/visitors');
+        const data = await response.json();
+        const visitors = data.visitors || [];
+        if (!visitors.length) {
+          list.innerHTML = '<div class="visitor-item">No visitor IPs recorded yet.</div>';
+          return;
+        }
+
+        list.innerHTML = visitors.map((visitor) => `
+          <div class="visitor-item">
+            <strong>${visitor.ip}</strong>
+            <small>Visits: ${visitor.count} · Last seen: ${new Date(visitor.lastSeen).toLocaleString()}</small>
+          </div>
+        `).join('');
+      } catch (error) {
+        list.innerHTML = '<div class="visitor-item">Unable to load visitor IPs right now.</div>';
+      }
+    }
+
+    async function trackVisit() {
+      try {
+        await fetch('/track-visit', { method: 'POST' });
+      } catch (error) {
+        // Ignore tracking errors.
+      }
+      loadVisitors();
+    }
+
+    trackVisit();
   </script>
 </body>
 </html>

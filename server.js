@@ -10,6 +10,7 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const subscribersFile = path.join(__dirname, 'subscribers.json');
+const visitorsFile = path.join(__dirname, 'visitors.json');
 
 app.use(cors());
 app.use(express.json());
@@ -26,6 +27,19 @@ function loadSubscribers() {
 
 function saveSubscribers(subscribers) {
   fs.writeFileSync(subscribersFile, JSON.stringify(subscribers, null, 2));
+}
+
+function loadVisitors() {
+  if (!fs.existsSync(visitorsFile)) return [];
+  try {
+    return JSON.parse(fs.readFileSync(visitorsFile, 'utf8'));
+  } catch {
+    return [];
+  }
+}
+
+function saveVisitors(visitors) {
+  fs.writeFileSync(visitorsFile, JSON.stringify(visitors, null, 2));
 }
 
 function getTransporter() {
@@ -117,6 +131,26 @@ app.get('/', (req, res) => {
 
 app.get('/health', (req, res) => {
   res.json({ ok: true, message: 'Service is running.' });
+});
+
+app.post('/track-visit', (req, res) => {
+  const ip = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || req.ip || '').split(',')[0].trim();
+  const visitors = loadVisitors();
+  const existing = visitors.find(entry => entry.ip === ip);
+
+  if (existing) {
+    existing.count += 1;
+    existing.lastSeen = new Date().toISOString();
+  } else {
+    visitors.push({ ip, count: 1, firstSeen: new Date().toISOString(), lastSeen: new Date().toISOString() });
+  }
+
+  saveVisitors(visitors);
+  res.json({ ok: true, visitors: visitors.slice(-20).reverse() });
+});
+
+app.get('/visitors', (req, res) => {
+  res.json({ visitors: loadVisitors().slice().sort((a, b) => b.count - a.count) });
 });
 
 app.listen(PORT, () => {
